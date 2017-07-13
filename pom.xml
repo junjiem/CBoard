@@ -186,10 +186,11 @@
             <artifactId>postgresql</artifactId>
             <version>9.3-1104-jdbc41</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.solr/solr-solrj -->
         <dependency>
             <groupId>org.apache.solr</groupId>
             <artifactId>solr-solrj</artifactId>
-            <version>4.10.3</version>
+            <version>5.5.1</version>
         </dependency>
         <dependency>
             <groupId>org.reflections</groupId>

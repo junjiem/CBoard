@@ -2,36 +2,43 @@ package org.cboard.solr;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Charsets;
-import com.google.common.collect.Ordering;
 import com.google.common.hash.Hashing;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrServer;
-import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.LBHttpSolrServer;
+import org.apache.solr.client.solrj.impl.LBHttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
+import org.apache.solr.common.util.SimpleOrderedMap;
 import org.cboard.dataprovider.DataProvider;
-import org.cboard.dataprovider.DataProviderManager;
+import org.cboard.dataprovider.aggregator.Aggregatable;
+import org.cboard.dataprovider.aggregator.jvm.JvmAggregator;
 import org.cboard.dataprovider.annotation.DatasourceParameter;
 import org.cboard.dataprovider.annotation.ProviderName;
 import org.cboard.dataprovider.annotation.QueryParameter;
+import org.cboard.dataprovider.config.*;
+import org.cboard.dataprovider.result.AggregateResult;
+import org.cboard.dataprovider.result.ColumnIndex;
 import org.cboard.exception.CBoardException;
-import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
-import java.lang.reflect.Field;
 import java.net.MalformedURLException;
+import java.net.URLDecoder;
 import java.util.*;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  * Created by JunjieM on 2017-7-7.
  */
 @ProviderName(name = "Solr")
-public class SolrDataProvider extends DataProvider {
+public class SolrDataProvider extends DataProvider implements Aggregatable {
 
     private static final Logger LOG = LoggerFactory.getLogger(SolrDataProvider.class);
 
@@ -40,6 +47,9 @@ public class SolrDataProvider extends DataProvider {
 
     @DatasourceParameter(label = "{{'DATAPROVIDER.SOLR.SOLR_SERVERS'|translate}}", placeholder = "<ip>:<port>,[<ip>:<port>]...", type = DatasourceParameter.Type.Input, order = 1)
     private String solrServers = "solrServers";
+
+    @DatasourceParameter(label = "{{'DATAPROVIDER.AGGREGATABLE_PROVIDER'|translate}}", type = DatasourceParameter.Type.Checkbox, order = 100)
+    private String aggregateProvider = "aggregateProvider";
 
     @QueryParameter(label = "{{'DATAPROVIDER.SOLR.COLLECTION'|translate}}", pageType = "test,dataset,widget", type = QueryParameter.Type.Input, order = 1)
     private String collection = "collection";
@@ -69,7 +79,8 @@ public class SolrDataProvider extends DataProvider {
 
     @Override
     public boolean doAggregationInDataSource() {
-        return false;
+        String v = dataSource.get(aggregateProvider);
+        return v != null && "true".equals(v);
     }
 
     private synchronized SolrServerPoolFactory getSolrServerPoolFactory(String solrServers, String collectionName) {
@@ -95,9 +106,9 @@ public class SolrDataProvider extends DataProvider {
         return factory;
     }
 
-    private SolrServer getConnection(String solrServers, String collectionName) {
+    private SolrClient getConnection(String solrServers, String collectionName) {
         String usePool = dataSource.get(pooled);
-        SolrServer solrServer = null;
+        SolrClient solrServer = null;
         if (usePool != null && "true".equals(usePool)) {
             solrServer = getSolrServerPoolFactory(solrServers, collectionName).getConnection();
         } else {
@@ -106,7 +117,7 @@ public class SolrDataProvider extends DataProvider {
         return solrServer;
     }
 
-    private void releaseConnection(String solrServers, String collectionName, SolrServer solrServer) {
+    private void releaseConnection(String solrServers, String collectionName, SolrClient solrServer) {
         getSolrServerPoolFactory(solrServers, collectionName).releaseConnection(solrServer);
     }
 
@@ -133,13 +144,13 @@ public class SolrDataProvider extends DataProvider {
         return solrQuery;
     }
 
-    private QueryResponse getQueryResponse(String solrServers, String collectionName) {
-        SolrServer solrServer = null;
+    private QueryResponse getQueryResponse(String solrServers, String collectionName, SolrQuery solrQuery) {
+        SolrClient solrServer = null;
         QueryResponse res = null;
         try {
             solrServer = getConnection(solrServers, collectionName);
-            res = solrServer.query(getSolrQuery());
-        } catch (SolrServerException e) {
+            res = solrServer.query(solrQuery);
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
             if (solrServer != null) {
@@ -157,15 +168,15 @@ public class SolrDataProvider extends DataProvider {
         return Hashing.md5().newHasher().putString(JSONObject.toJSON(dataSource).toString() + JSONObject.toJSON(query).toString(), Charsets.UTF_8).hash().toString();
     }
 
-    private SolrServer getSolrServer(String solrServers, String collectionName) {
+    private SolrClient getSolrServer(String solrServers, String collectionName) {
         String[] tempServers = solrServers.split(",");
         String[] servers = new String[tempServers.length];
         for (int i = 0; i < tempServers.length; i++) {
             servers[i] = "http://" + tempServers[i] + "/solr/" + collectionName;
         }
-        SolrServer solrServer = null;
+        SolrClient solrServer = null;
         try {
-            solrServer = new LBHttpSolrServer(servers);
+            solrServer = new LBHttpSolrClient(servers);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
@@ -181,7 +192,7 @@ public class SolrDataProvider extends DataProvider {
         if (StringUtils.isBlank(collectionName))
             throw new CBoardException("Collection can not be empty.");
 
-        QueryResponse qs = getQueryResponse(solrServers, collectionName);
+        QueryResponse qs = getQueryResponse(solrServers, collectionName, getSolrQuery());
 
         if (qs == null || qs.getResults().size() == 0) {
             return new String[0][0];
@@ -189,7 +200,7 @@ public class SolrDataProvider extends DataProvider {
 
         SolrDocumentList results = qs.getResults();
         Set<Map.Entry<String, Object>> entrySet = results.get(0).entrySet();
-        String[][] strings = new String[results.size() + 1][entrySet.size()];
+        String[][] strings = new String[results.size()+1][entrySet.size()];
 
         // 字段行
         int col = 0;
@@ -212,5 +223,250 @@ public class SolrDataProvider extends DataProvider {
         }
 
         return strings;
+    }
+
+    @Override
+    public String[] queryDimVals(String columnName, AggConfig config) throws Exception {
+        return new String[0];
+    }
+
+    @Override
+    public AggregateResult queryAggData(AggConfig config) throws Exception {
+        //没有聚合参数直接返回
+        if(config.getValues().size()<=0){
+            String[][] strings = getData();
+            JvmAggregator jgg = new JvmAggregator();
+            return jgg.queryAggData(config, strings);
+        }
+
+        //获取统计集合
+        QueryResponse response = getQueryResponse(dataSource.get("solrServers"), query.get("collection"), getAggQuery(config));
+        SimpleOrderedMap obj = (SimpleOrderedMap)((SimpleOrderedMap)response.getResponse().get("facet_counts")).get("facet_pivot");
+        Supplier<Stream<DimensionConfig>> dimStream = () -> Stream.concat(config.getColumns().stream(), config.getRows().stream());
+        String dimColsStr = assembleDimColumns(dimStream.get()).replaceAll(" ","");
+        List statList = (List)obj.get(dimColsStr);
+
+        //解析统计集合
+        List<String[]> list = dealStatList(statList, config);
+        List<ColumnIndex> dimensionList = dimStream.get().map(ColumnIndex::fromDimensionConfig).collect(Collectors.toList());
+        int dimSize = dimensionList.size();
+        dimensionList.addAll(config.getValues().stream().map(ColumnIndex::fromValueConfig).collect(Collectors.toList()));
+        IntStream.range(0, dimensionList.size()).forEach(j -> dimensionList.get(j).setIndex(j));
+        list.forEach(row -> {
+            IntStream.range(0, dimSize).forEach(a -> {
+                if (row[a] == null) row[a] = NULL_STRING;
+            });
+        });
+        String[][] result = list.toArray(new String[][]{});
+        return new AggregateResult(dimensionList, result);
+    }
+
+    private List<String[]> dealStatList(List statList, AggConfig config) {
+        Stream<DimensionConfig> dimStream = Stream.concat(config.getColumns().stream(), config.getRows().stream());
+        String dimColsStr = assembleDimColumns(dimStream).replaceAll(" ","");
+        List<String[]> list = new LinkedList<>();
+        for(ValueConfig e:config.getValues()){
+            dimColsStr += ","+e.getAggType()+"@"+e.getColumn();
+        }
+        String[] fileds = dimColsStr.split(",");
+        for(Object e : statList){
+            SimpleOrderedMap orderedMap = (SimpleOrderedMap)e;
+            String[] row = new String[fileds.length];
+            for(int x=0;x<fileds.length;x++){
+                if(x <= fileds.length-config.getValues().size()-1){
+                    if(orderedMap.get("value")!=null && fileds[x].equals(orderedMap.get("field"))){
+                        row[x] = orderedMap.get("value").toString();
+                    }
+                    if(x == fileds.length-config.getValues().size()-1){
+                        orderedMap = (SimpleOrderedMap)((SimpleOrderedMap)orderedMap.get("stats")).get("stats_fields");
+                    }else{
+                        List orderedList = (List) orderedMap.get("pivot");
+                        if(orderedList != null){
+                            orderedMap = (SimpleOrderedMap)orderedList.get(0);
+                        }else{
+                            continue;
+                        }
+                    }
+                }else{
+                    String aggType = fileds[x].split("@")[0];
+                    String field = fileds[x].split("@")[1];
+                    SimpleOrderedMap statMap = (SimpleOrderedMap)orderedMap.get(field);
+                    if(orderedMap != null){
+                        switch (aggType) {
+                            case "sum":
+                                row[x] = statMap.get("sum") != null ? statMap.get("sum").toString():"";
+                                break;
+                            case "avg":
+                                row[x] = statMap.get("mean") != null ? statMap.get("mean").toString():"";
+                                break;
+                            case "max":
+                                row[x] = statMap.get("max") != null ? statMap.get("max").toString():"";
+                                break;
+                            case "min":
+                                row[x] = statMap.get("min") != null ? statMap.get("min").toString():"";
+                                break;
+                            case "distinct":
+                                row[x] = statMap.get("count") != null ? statMap.get("count").toString():""; // TODO: 2017-07-13
+                                break;
+                            default:
+                                row[x] = statMap.get("count") != null ? statMap.get("count").toString():"";
+                        }
+                    }
+                }
+            }
+            list.add(row);
+        }
+        return list;
+    }
+
+    private String configComponentToSql(ConfigComponent cc) {
+        if (cc instanceof DimensionConfig) {
+            return filter2SolrCondtion.apply((DimensionConfig) cc);
+        } else if (cc instanceof CompositeConfig) {
+            CompositeConfig compositeConfig = (CompositeConfig) cc;
+            String sql = compositeConfig.getConfigComponents().stream().map(e -> separateNull(e)).map(e -> configComponentToSql(e)).collect(Collectors.joining(" " + compositeConfig.getType() + " "));
+            return "(" + sql + ")";
+        }
+        return null;
+    }
+
+    private String getValueStrEq(DimensionConfig cc, int i) {
+        return cc.getColumnName() +":"+ cc.getValues().get(i);
+    }
+
+    private String getValueStrNe(DimensionConfig cc, int i) {
+        return "-"+cc.getColumnName() +":"+ cc.getValues().get(i);
+    }
+
+    /**
+     * Parser a single filter configuration to sql syntax
+     */
+    private Function<DimensionConfig, String> filter2SolrCondtion = (config) -> {
+        if (config.getValues().size() == 0) {
+            return null;
+        }
+        if (NULL_STRING.equals(config.getValues().get(0))) {
+            switch (config.getFilterType()) {
+                case "=":
+                case "≠":
+                    return ("=".equals(config.getFilterType()) ? "-"+config.getColumnName()+":*" : config.getColumnName()+":*");
+            }
+        }
+
+        switch (config.getFilterType()) {
+            case "=":
+            case "eq":
+                return "(" + IntStream.range(0, config.getValues().size()).boxed().map(i -> getValueStrEq(config, i)).collect(Collectors.joining("OR")) + ")";
+            case "≠":
+            case "ne":
+                return "(" + IntStream.range(0, config.getValues().size()).boxed().map(i -> getValueStrNe(config, i)).collect(Collectors.joining("AND")) + ")";
+            case ">":
+                return config.getColumnName() + ":" + "{"+config.getValues().get(0)+" TO *]";
+            case "<":
+                return config.getColumnName() + ":" + "{* TO "+config.getValues().get(0)+"}";
+            case "≥":
+                return config.getColumnName() + ":" + "["+config.getValues().get(0)+" TO *]";
+            case "≤":
+                return config.getColumnName() + ":" + "{* TO "+config.getValues().get(0)+"]";
+            case "(a,b]":
+                if (config.getValues().size() >= 2) {
+                    return config.getColumnName() + ":" + "{"+config.getValues().get(0)+" TO" +config.getValues().get(1)+"]";
+                } else {
+                    return null;
+                }
+            case "[a,b)":
+                if (config.getValues().size() >= 2) {
+                    return config.getColumnName() + ":" + "["+config.getValues().get(0)+" TO "+config.getValues().get(1)+"}";
+                } else {
+                    return null;
+                }
+            case "(a,b)":
+                if (config.getValues().size() >= 2) {
+                    return config.getColumnName() + ":" + "{"+config.getValues().get(0)+"TO"+config.getValues().get(1)+"}";
+                } else {
+                    return null;
+                }
+            case "[a,b]":
+                if (config.getValues().size() >= 2) {
+                    return config.getColumnName() + ":" + "["+config.getValues().get(0)+" TO "+config.getValues().get(1)+"]";
+                } else {
+                    return null;
+                }
+        }
+        return null;
+    };
+
+    private String assembleDimColumns(Stream<DimensionConfig> columnsStream) {
+        StringJoiner columns = new StringJoiner(", ", "", " ");
+        columns.setEmptyValue("");
+        columnsStream.map(g -> g.getColumnName()).distinct().filter(e -> e != null).forEach(columns::add);
+        return columns.toString();
+    }
+
+    private SolrQuery getAggQuery(AggConfig config) throws Exception {
+        Stream<DimensionConfig> dimStream = Stream.concat(config.getColumns().stream(), config.getRows().stream());
+        String dimColsStr = assembleDimColumns(dimStream).replaceAll(" ","");
+        SolrQuery sQuery = getSolrQuery();
+        //行纬 列维 过滤 过滤条件
+        Stream<DimensionConfig> c = config.getColumns().stream();
+        Stream<DimensionConfig> r = config.getRows().stream();
+        Stream<ConfigComponent> f = config.getFilters().stream();
+        Stream<ConfigComponent> filters = Stream.concat(Stream.concat(c, r), f);
+        StringJoiner where = new StringJoiner(",", "", "");
+        where.setEmptyValue("");
+        filters.map(e -> separateNull(e)).map(e -> configComponentToSql(e)).filter(e -> e != null).forEach(where::add);
+        if(org.apache.commons.lang.StringUtils.isNotEmpty(where.toString())) {
+            sQuery.set("fq", where.toString().split(","));
+        }
+        //存在聚合参数
+        if(config.getValues().size()>0) {
+            sQuery.set("stats", true);
+            String[] stats = new String[config.getValues().size()];
+            int i = 0;
+            for (ValueConfig e : config.getValues()) {
+                stats[i] = "{!tag=piv}" + e.getColumn();
+                i++;
+            }
+            sQuery.set("stats.field", stats);
+            sQuery.setFacet(true);
+            sQuery.add("facet.pivot", "{!stats=piv}" + dimColsStr);
+        }
+        sQuery.set("wt","json");
+        return sQuery;
+    }
+
+    @Override
+    public String[] getColumn() throws Exception {
+        String solrServers = dataSource.get("solrServers");
+        if (StringUtils.isBlank(solrServers))
+            throw new CBoardException("Datasource config Solr Servers can not be empty.");
+        String collectionName = query.get("collection");
+        if (StringUtils.isBlank(collectionName))
+            throw new CBoardException("Collection can not be empty.");
+
+        QueryResponse qs = getQueryResponse(solrServers, collectionName, getSolrQuery());
+
+        if (qs == null || qs.getResults().size() == 0) {
+            return new String[0];
+        }
+
+        SolrDocumentList results = qs.getResults();
+        Set<Map.Entry<String, Object>> entrySet = results.get(0).entrySet();
+        String[] fileds = new String[entrySet.size()];
+
+        // 字段行
+        int col = 0;
+        for (Map.Entry<String, Object> entry : entrySet) {
+            fileds[col] = entry.getKey();
+            col++;
+        }
+        return fileds;
+    }
+
+    @Override
+    public String viewAggDataQuery(AggConfig ac) throws Exception {
+        //返回查询sql
+        return "http://"+dataSource.get("solrServers")+"/solr/"+query.get("collection")+"/select?"+
+                URLDecoder.decode(getAggQuery(ac).toString());
     }
 }
