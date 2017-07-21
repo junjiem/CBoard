@@ -67,13 +67,19 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
                 column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
                 measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
+            },
+            {
+                name: translate('CONFIG.WIDGET.RELATION'), value: 'relation', class: 'cLink',
+                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
+                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
+                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0')
             }
         ];
 
         $scope.chart_types_status = {
             "line": true, "pie": true, "kpi": true, "table": true,
             "funnel": true, "sankey": true, "radar": true, "map": true,
-            "scatter": true, "gauge": true
+            "scatter": true, "gauge": true, "relation":true
         };
 
         $scope.value_series_types = [
@@ -109,7 +115,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             radar: {keys: 0, groups: 0, filters: 0, values: 0},
             map: {keys: 0, groups: 0, filters: 0, values: 0},
             scatter: {keys: 0, groups: 0, filters: 0, values: 0},
-            gauge: {keys: -1, groups: -1, filters: 0, values: 1}
+            gauge: {keys: -1, groups: -1, filters: 0, values: 1},
+            relation: {keys: 0, groups: 0, filters: 0, values: 0}
         };
 
         //界面控制
@@ -509,6 +516,12 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                         {proportion: '1', color: '#ff4500'}
                     ];
                     break;
+                case 'relation':
+                    $scope.curWidget.config.selects = angular.copy($scope.columns);
+                    $scope.curWidget.config.sources = new Array();
+                    $scope.curWidget.config.targets = new Array();
+                    $scope.curWidget.config.links = new Array();
+                    break;
                 default:
                     $scope.curWidget.config.values.push({name: '', cols: []});
                     _.each(oldConfig.values, function (v) {
@@ -621,6 +634,13 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                         {proportion: '1', color: '#ff4500'}
                     ];
                     break;
+                case 'relation':
+                    $scope.curWidget.config.selects = angular.copy($scope.columns);
+                    $scope.curWidget.config.sources = new Array();
+                    $scope.curWidget.config.targets = new Array();
+                    $scope.curWidget.config.links = new Array();
+                    $scope.curWidget.config.filters = new Array();
+                    break;
             }
             addWatch();
         };
@@ -647,8 +667,20 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             });
         };
 
+        var combineConfig = function () {
+            switch ($scope.curWidget.config.chart_type) {
+                case 'relation':
+                    var config = $scope.curWidget.config;
+                    $scope.curWidget.config.keys = config.sources.concat(config.targets).concat(config.links);
+                    break;
+                default :
+                    break;
+            }
+        };
+
         $scope.preview = function () {
             cleanPreview();
+            combineConfig();
             $scope.loadingPre = true;
             chartService.render($('#preview_widget'), {
                 config: $scope.curWidget.config,
@@ -708,6 +740,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                         };
                         break;
                     case 'map':
+                    case 'relation':
                         $scope.previewDivWidth = 12;
                         break;
                 }
@@ -839,7 +872,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             if (!$scope.curWidget.filterGroups) {
                 $scope.curWidget.filterGroups = [];
             }
-            updateService.updateConfig($scope.curWidget.config);
+            updateService.updateConfig($scope.curWidget.config, true);
             $scope.datasource = _.find($scope.datasourceList, function (ds) {
                 return ds.id == widget.data.datasource;
             });
@@ -868,7 +901,16 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             var groups = _.find($scope.curWidget.config.groups, function (k) {
                 return k.col == e.column;
             });
-            return !(keys || groups);
+            var sources = _.find($scope.curWidget.config.sources, function (k) {
+                return k.col == e.column;
+            });
+            var targets = _.find($scope.curWidget.config.targets, function (k) {
+                return k.col == e.column;
+            });
+            var links = _.find($scope.curWidget.config.links, function (k) {
+                return k.col == e.column;
+            });
+            return !(groups || sources || targets || links);
         };
 
         $scope.filterExpressions = function (e) {

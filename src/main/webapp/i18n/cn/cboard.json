@@ -108,6 +108,9 @@
       "ROW": "行维",
       "GROUP": "列维",
       "VALUE": "指标",
+      "SOURCE": "源",
+      "TARGET": "目标",
+      "LINK": "关系",
       "MIN_VALUE": "最小值",
       "MAX_VALUE": "最大值",
       "VALUE_AXIS": "轴",
@@ -166,7 +169,8 @@
       "ADD_NEW_STYLE": "添加样式",
       "LINE_STYLE": "线条样式",
       "STYLE_PROPORTION": "比例",
-      "STYLE_COLOR": "颜色"
+      "STYLE_COLOR": "颜色",
+      "RELATION": "力导向图"
     },
     "DASHBOARD": {
       "DASHBOARD": "看板",

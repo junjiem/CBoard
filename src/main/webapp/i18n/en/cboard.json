@@ -108,6 +108,9 @@
       "ROW": "Row",
       "GROUP": "Column",
       "VALUE": "Value",
+      "SOURCE": "Source",
+      "TARGET": "Target",
+      "LINK": "Link",
       "MIN_VALUE": "Min Value",
       "MAX_VALUE": "Max Value",
       "VALUE_AXIS": "Value Axis",
@@ -166,7 +169,8 @@
       "ADD_NEW_STYLE": "Add New Style",
       "LINE_STYLE": "Line Style",
       "STYLE_PROPORTION": "Proportion",
-      "STYLE_COLOR": "Color"
+      "STYLE_COLOR": "Color",
+      "RELATION": "Force"
     },
     "DASHBOARD": {
       "CATEGORY": "Category",

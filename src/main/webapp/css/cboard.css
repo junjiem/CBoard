@@ -139,7 +139,8 @@
 .cMap.disabled{  background-image: url(../imgs/map.png);  }
 .cGauge{ background-image: url(../imgs/gauge-active.png); }
 .cGauge.disabled{ background-image: url(../imgs/gauge.png); }
-
+.cLink{ background-image: url(../imgs/link-active.png); }
+.cLink.disabled{ background-image: url(../imgs/link.png); }
 .chart-type a.active{
     background-color: #FFF;
     box-shadow: 0 0 0 2px rgba(81,130,227,.06),inset 0 0 0 2px rgba(81,129,228,.6);
