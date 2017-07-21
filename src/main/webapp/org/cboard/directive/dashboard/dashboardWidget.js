@@ -79,6 +79,7 @@ cBoard.directive('dashboardWidget', function ($compile, $templateCache, dataServ
                             renderEchart(scope, element, attrs);
                             break;
                         case 'relation':
+                        case 'wordCloud':
                             renderEchart(scope, element, attrs);
                             break;
                     }

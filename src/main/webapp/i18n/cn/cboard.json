@@ -170,7 +170,8 @@
       "LINE_STYLE": "线条样式",
       "STYLE_PROPORTION": "比例",
       "STYLE_COLOR": "颜色",
-      "RELATION": "力导向图"
+      "RELATION": "力导向图",
+      "WORD_CLOUD": "标签云"
     },
     "DASHBOARD": {
       "DASHBOARD": "看板",
@@ -279,7 +280,8 @@
       "FAIL": "失败",
       "FINISH": "完成",
       "PROCESSING": "处理中",
-      "STATUS": "状态"
+      "STATUS": "状态",
+      "SEND_MAIL": "发送邮件"
     },
     "SHARE_RES": {
       "YOUR_RES": "你的资源",

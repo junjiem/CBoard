@@ -1,11 +1,17 @@
 /**
- * Created by yfyuan on 2016/10/28.
+ * Created by Junjie.M on 2017/07/18.
  */
 'use strict';
 cBoard.service('chartGaugeService', function () {
 
     this.render = function (containerDom, option, scope, persist) {
-        return new CBoardEChartRender(containerDom, option).chart(null, persist);
+        if (option == null) {
+            containerDom.html("<div class=\"alert alert-danger\" role=\"alert\">No Data!</div>");
+            return;
+        }
+        var height;
+        scope ? height = scope.myheight - 20 : null;
+        return new CBoardEChartRender(containerDom, option).chart(height, persist);
     };
 
     this.parseOption = function (data) {
@@ -14,11 +20,13 @@ cBoard.service('chartGaugeService', function () {
                 formatter: "{a} <br/>{b} : {c}"
             },
             toolbox: {
-                show: true,
-                feature: {
-                    mark: {show: false},
-                    restore: {show: false},
-                    saveAsImage: {show: true}
+                show : true,
+                feature : {
+                    mark : {show: false},
+                    dataView : {show: true, readOnly: true},
+                    //magicType : {show: true, type: ['line', 'bar']},
+                    restore : {show: false},
+                    saveAsImage : {show: true}
                 }
             },
             series: [

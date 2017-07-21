@@ -73,13 +73,19 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
                 column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
                 measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0')
+            },
+            {
+                name: translate('CONFIG.WIDGET.WORD_CLOUD'), value: 'wordCloud', class: 'cWordCloud',
+                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
+                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
             }
         ];
 
         $scope.chart_types_status = {
             "line": true, "pie": true, "kpi": true, "table": true,
             "funnel": true, "sankey": true, "radar": true, "map": true,
-            "scatter": true, "gauge": true, "relation":true
+            "scatter": true, "gauge": true, "wordCloud": true, "relation":true
         };
 
         $scope.value_series_types = [
@@ -116,7 +122,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             map: {keys: 0, groups: 0, filters: 0, values: 0},
             scatter: {keys: 0, groups: 0, filters: 0, values: 0},
             gauge: {keys: -1, groups: -1, filters: 0, values: 1},
-            relation: {keys: 0, groups: 0, filters: 0, values: 0}
+            relation: {keys: 0, groups: 0, filters: 0, values: 0},
+            wordCloud: {keys: 0, groups: -1, filters: 0, values: 1}
         };
 
         //界面控制
