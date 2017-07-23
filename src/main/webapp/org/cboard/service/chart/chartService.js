@@ -4,8 +4,7 @@
 'use strict';
 cBoard.service('chartService', function ($q, dataService, chartPieService, chartLineService, chartFunnelService,
                                          chartSankeyService, chartTableService, chartKpiService, chartRadarService,
-                                         chartMapService, chartScatterService, chartGaugeService, chartWordCloudService) {
-
+                                         chartMapService, chartScatterService, chartGaugeService, chartWordCloudService, chartRelationService){
         this.render = function (containerDom, widget, optionFilter, scope, reload, persist) {
             var deferred = $q.defer();
             var chart = getChartServices(widget.config);
@@ -138,6 +137,9 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                     break;
                 case 'wordCloud':
                     chart = chartWordCloudService;
+                    break;
+                case 'relation':
+                    chart = chartRelationService;
                     break;
             }
             return chart;

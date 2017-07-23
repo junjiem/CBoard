@@ -108,6 +108,9 @@
       "ROW": "Row",
       "GROUP": "Column",
       "VALUE": "Value",
+      "SOURCE": "Source",
+      "TARGET": "Target",
+      "LINK": "Link",
       "MIN_VALUE": "Min Value",
       "MAX_VALUE": "Max Value",
       "VALUE_AXIS": "Value Axis",
@@ -167,6 +170,7 @@
       "LINE_STYLE": "Line Style",
       "STYLE_PROPORTION": "Proportion",
       "STYLE_COLOR": "Color",
+      "RELATION": "Force",
       "WORD_CLOUD": "Word Cloud"
     },
     "DASHBOARD": {
