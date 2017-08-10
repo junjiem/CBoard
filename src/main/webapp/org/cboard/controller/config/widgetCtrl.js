@@ -114,7 +114,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 name: translate('CONFIG.WIDGET.HOT_MAP'), value: 'hotMap', class: 'cHotMap',
                 row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
                 column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
-                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
+                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
             },
             {
                 name: translate('CONFIG.WIDGET.MARK_LINE_MAP_BMAP'), value: 'markLineMapBmap', class: 'cMarkLineMapBmap',
@@ -124,6 +124,18 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             },
             {
                 name: translate('CONFIG.WIDGET.HOT_MAP_BMAP'), value: 'hotMapBmap', class: 'cHotMapBmap',
+                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
+                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
+            },
+            {
+                name: translate('CONFIG.WIDGET.SCATTER_MAP'), value: 'scatterMap', class: 'cScatterMap',
+                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
+                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
+            },
+            {
+                name: translate('CONFIG.WIDGET.SCATTER_MAP_BMAP'), value: 'scatterMapBmap', class: 'cScatterMapBmap',
                 row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
                 column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
                 measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
@@ -136,7 +148,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             "scatter": true, "gauge": true, "wordCloud": true, "treeMap": true,
             "areaMap": true, "heatMapCalendar": true, "heatMapTable": true,
             "markLineMap": true, "liquidFill": true , "hotMap": true, 
-            "markLineMapBmap": true, "hotMapBmap": true
+            "markLineMapBmap": true, "hotMapBmap": true,"scatterMap":true,"scatterMapBmap":true
         };
 
         $scope.value_series_types = [
@@ -227,7 +239,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             liquidFill: {keys: 0, groups: 0, filters: -1, values: 1},
             hotMap: {keys: 2, groups: 0, filters: -1, values: 1},
             markLineMapBmap: {keys: 2, groups: 2, filters: -1, values: 1},
-            hotMapBmap: {keys: 2, groups: 0, filters: -1, values: 1}
+            hotMapBmap: {keys: 2, groups: 0, filters: -1, values: 1},
+            scatterMap:{keys: 2, groups: 0, filters: -1, values: 2},
+            scatterMapBmap:{keys: 2, groups: 0, filters: -1, values: 2}
         };
 
         //界面控制
@@ -735,6 +749,30 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                         v.style = 'bg-aqua';
                     });
                     break;
+                case 'scatterMap':
+                    $scope.curWidget.config.values.push({name: '', cols: []});
+                    _.each(oldConfig.values, function (v) {
+                        _.each(v.cols, function (c) {
+                            $scope.curWidget.config.values[0].cols.push(c);
+                        });
+                    });
+                    $scope.curWidget.config.selects = angular.copy($scope.columns);
+                    _.each($scope.curWidget.config.values, function (v) {
+                        v.style = 'bg-aqua';
+                    });
+                    break;
+                case 'scatterMapBmap':
+                    $scope.curWidget.config.values.push({name: '', cols: []});
+                    _.each(oldConfig.values, function (v) {
+                        _.each(v.cols, function (c) {
+                            $scope.curWidget.config.values[0].cols.push(c);
+                        });
+                    });
+                    $scope.curWidget.config.selects = angular.copy($scope.columns);
+                    _.each($scope.curWidget.config.values, function (v) {
+                        v.style = 'bg-aqua';
+                    });
+                    break;
                 default:
                     $scope.curWidget.config.values.push({name: '', cols: []});
                     _.each(oldConfig.values, function (v) {
@@ -926,6 +964,26 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     }];
                     $scope.curWidget.config.filters = new Array();
                     break;
+                case 'scatterMap':
+                    $scope.curWidget.config.selects = angular.copy($scope.columns);
+                    $scope.curWidget.config.keys = new Array();
+                    $scope.curWidget.config.groups = new Array();
+                    $scope.curWidget.config.values = [{
+                        name: '',
+                        cols: []
+                    }];
+                    $scope.curWidget.config.filters = new Array();
+                    break;
+                case 'scatterMapBmap':
+                    $scope.curWidget.config.selects = angular.copy($scope.columns);
+                    $scope.curWidget.config.keys = new Array();
+                    $scope.curWidget.config.groups = new Array();
+                    $scope.curWidget.config.values = [{
+                        name: '',
+                        cols: []
+                    }];
+                    $scope.curWidget.config.filters = new Array();
+                    break;
             }
             addWatch();
         };
@@ -963,7 +1021,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             $scope.loadingPre = true;
             var charType = $scope.curWidget.config.chart_type;
             //百度地图特殊处理
-            if(charType == 'markLineMapBmap' || charType == 'hotMapBmap'){
+            if(charType == 'markLineMapBmap' || charType == 'hotMapBmap' || charType == 'scatterMapBmap'){
                 chartService.renderBmap($('#preview_widget'), {
                     config: $scope.curWidget.config,
                     datasource: $scope.datasource ? $scope.datasource.id : null,
@@ -1045,6 +1103,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                             $scope.previewDivWidth = 12;
                             break;
                         case 'hotMap':
+                            $scope.previewDivWidth = 12;
+                            break;
+                        case 'scatterMap':
                             $scope.previewDivWidth = 12;
                             break;
                     }

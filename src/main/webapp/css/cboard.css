@@ -159,6 +159,10 @@
 .cMarkLineMapBmap.disabled{ background-image: url(../imgs/markLineMap.png);}
 .cHotMapBmap{ background-image: url(../imgs/areaMap-active.png); }
 .cHotMapBmap.disabled{ background-image: url(../imgs/areaMap.png); }
+.cScatterMap{ background-image: url(../imgs/areaMap-active.png); }
+.cScatterMap.disabled{ background-image: url(../imgs/areaMap.png); }
+.cScatterMapBmap{ background-image: url(../imgs/markLineMap-active.png); }
+.cScatterMapBmap.disabled{ background-image: url(../imgs/markLineMap.png);}
 
 
 .chart-type a.active{
