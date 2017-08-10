@@ -102,6 +102,18 @@ cBoard.directive('dashboardWidget', function ($compile, $templateCache, dataServ
                         case 'hotMap':
                             renderEchart(scope, element, attrs);
                             break;
+                        case 'markLineMapBmap':
+                            renderEchart(scope, element, attrs);
+                            break;
+                        case 'hotMapBmap':
+                            renderEchart(scope, element, attrs);
+                            break;
+                        case 'scatterMap':
+                            renderEchart(scope, element, attrs);
+                            break;
+                        case 'scatterMapBmap':
+                            renderEchart(scope, element, attrs);
+                            break;
                     }
                 }
             }

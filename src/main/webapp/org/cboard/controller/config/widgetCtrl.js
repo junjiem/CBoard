@@ -23,7 +23,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             {
                 name: translate('CONFIG.WIDGET.SCATTER'), value: 'scatter', class: 'cScatter',
                 row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
-                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
                 measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
             },
             {
@@ -40,7 +40,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             },
             {
                 name: translate('CONFIG.WIDGET.FUNNEL'), value: 'funnel', class: 'cFunnel',
-                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
                 column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
                 measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
             },
@@ -114,7 +114,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 name: translate('CONFIG.WIDGET.HOT_MAP'), value: 'hotMap', class: 'cHotMap',
                 row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
                 column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
-                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
+                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
             },
             {
                 name: translate('CONFIG.WIDGET.MARK_LINE_MAP_BMAP'), value: 'markLineMapBmap', class: 'cMarkLineMapBmap',
@@ -126,6 +126,18 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 name: translate('CONFIG.WIDGET.HOT_MAP_BMAP'), value: 'hotMapBmap', class: 'cHotMapBmap',
                 row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
                 column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
+                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
+            },
+            {
+                name: translate('CONFIG.WIDGET.SCATTER_MAP'), value: 'scatterMap', class: 'cScatterMap',
+                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
+                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
+            },
+            {
+                name: translate('CONFIG.WIDGET.SCATTER_MAP_BMAP'), value: 'scatterMapBmap', class: 'cScatterMapBmap',
+                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
                 measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
             }
         ];
@@ -135,8 +147,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             "funnel": true, "sankey": true, "radar": true, "map": true,
             "scatter": true, "gauge": true, "wordCloud": true, "treeMap": true,
             "areaMap": true, "heatMapCalendar": true, "heatMapTable": true,
-            "markLineMap":true, "liquidFill": true , "hotMap":true,"markLineMapBmap":true,
-            "hotMapBmap":true
+            "markLineMap": true, "liquidFill": true , "hotMap": true, 
+            "markLineMapBmap": true, "hotMapBmap": true,"scatterMap":true,"scatterMapBmap":true
         };
 
         $scope.value_series_types = [
@@ -202,31 +214,34 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         ];
 
         /***************************************
-         *  0:  1 or more items
+         *  0:  None items
          *  1:  only 1 item
-         * -1:  none item
+         * -1:  None Restrict
+         *  2:  1 or more
          ***************************************/
         $scope.configRule = {
-            line: {keys: 0, groups: 0, filters: 0, values: 0},
-            pie: {keys: 0, groups: 0, filters: 0, values: 0},
-            kpi: {keys: -1, groups: -1, filters: 0, values: 1},
-            table: {keys: 0, groups: 0, filters: 0, values: 0},
-            funnel: {keys: 0, groups: -1, filters: 0, values: 0},
-            sankey: {keys: 0, groups: 0, filters: 0, values: 1},
-            radar: {keys: 0, groups: 0, filters: 0, values: 0},
-            map: {keys: 0, groups: 0, filters: 0, values: 0},
-            scatter: {keys: 0, groups: 0, filters: 0, values: 0},
-            gauge: {keys: -1, groups: -1, filters: 0, values: 1},
-            wordCloud: {keys: 0, groups: -1, filters: 0, values: 1},
-            treeMap: {keys: 0, groups: -1, filters: 0, values: 1},
-            areaMap: {keys: 0, groups: 0, filters: 0, values: 0},
-            heatMapCalendar: {keys: 1, groups: -1, filters: 0, values: 1},
-            heatMapTable: {keys: 0, groups: 0, filters: 0, values: 1},
-            markLineMap: {keys: 0, groups: 0, filters: 0, values: 1},
-            liquidFill: {keys: -1, groups: -1, filters: 0, values: 1},
-            hotMap: {keys: 0, groups: -1, filters: 0, values: 0},
-            markLineMapBmap: {keys: 0, groups: 0, filters: 0, values: 1},
-            hotMapBmap: {keys: 0, groups: -1, filters: 0, values: 0}
+            line: {keys: 2, groups: -1, filters: -1, values: 2},
+            pie: {keys: 2, groups: -1, filters: -1, values: 2},
+            kpi: {keys: 0, groups: 0, filters: -1, values: 1},
+            table: {keys: -1, groups: -1, filters: -1, values: -1},
+            funnel: {keys: -1, groups: 0, filters: -1, values: 2},
+            sankey: {keys: 2, groups: 2, filters: -1, values: 1},
+            radar: {keys: 2, groups: -1, filters: -1, values: 2},
+            map: {keys: 2, groups: -1, filters: -1, values: 2},
+            scatter: {keys: 2, groups: -1, filters: -1, values: 2},
+            gauge: {keys: 0, groups: 0, filters: -1, values: 1},
+            wordCloud: {keys: 2, groups: 0, filters: -1, values: 1},
+            treeMap: {keys: 2, groups: 0, filters: -1, values: 1},
+            areaMap: {keys: 2, groups: -1, filters: -1, values: 1},
+            heatMapCalendar: {keys: 1, groups: 0, filters: -1, values: 1},
+            heatMapTable: {keys: -1, groups: -1, filters: -1, values: 1},
+            markLineMap: {keys: 2, groups: 2, filters: -1, values: 1},
+            liquidFill: {keys: 0, groups: 0, filters: -1, values: 1},
+            hotMap: {keys: 2, groups: 0, filters: -1, values: 1},
+            markLineMapBmap: {keys: 2, groups: 2, filters: -1, values: 1},
+            hotMapBmap: {keys: 2, groups: 0, filters: -1, values: 1},
+            scatterMap:{keys: 2, groups: 0, filters: -1, values: 2},
+            scatterMapBmap:{keys: 2, groups: 0, filters: -1, values: 2}
         };
 
         //界面控制
@@ -526,28 +541,32 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             for (var type in $scope.chart_types_status) {
                 var rule = $scope.configRule[type];
                 var config = $scope.curWidget.config;
-                for (var k in rule) {
-                    var r = true;
-                    if (k == 'values') {
-                        if (rule[k] == -1) {
-                            r = config[k].length == 1 && config[k][0].cols.length <= 1;
-                        } else if (rule[k] > 0) {
-                            var l = 0;
-                            _.each(config[k], function (c) {
-                                l += c.cols.length;
-                            });
-                            r = l <= rule[k];
+                var flattenValues = [];
+                _.each(config.values, function(v) {
+                    flattenValues = flattenValues.concat(v.cols);
+                });
+                if (_.size(config.keys) == 0 && _.size(config.groups) == 0 && _.size(flattenValues) == 0) {
+                    r = false;
+                } else {
+                    for (var k in rule) {
+                        var r = true;
+                        if (rule[k] == 2) {
+                            if (k == 'values') {
+                                r = (_.size(flattenValues) >= 1);
+                            } else {
+                                r = (_.size(config[k]) >= 1);
+                            }
+                        } else if (rule[k] != -1) {
+                            if (k == 'values') {
+                                r = (_.size(flattenValues) == rule[k]);
+                            } else {
+                                r = (_.size(config[k]) == rule[k]);
+                            }
                         }
-                    } else {
-                        if (rule[k] == -1 && config[k] != undefined) {
-                            r = config[k].length == 0
-                        } else if (rule[k] > 0) {
-                            r = config[k].length <= rule[k];
+                        if (!r) {
+                            $scope.chart_types_status[type] = r;
+                            break;
                         }
-                    }
-                    if (!r) {
-                        $scope.chart_types_status[type] = r;
-                        break;
                     }
                 }
                 $scope.chart_types_status[type] = r;
@@ -573,8 +592,11 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             $scope.curWidget.config.filters = oldConfig.filters;
             switch ($scope.curWidget.config.chart_type) {
                 case 'line':
+                    $scope.curWidget.config.values.push({name: '', cols: []});
                     _.each(oldConfig.values, function (v) {
-                        $scope.curWidget.config.values.push({name: v.name, cols: v.cols});
+                        _.each(v.cols, function (c) {
+                            $scope.curWidget.config.values[0].cols.push(c);
+                        });
                     });
                     $scope.curWidget.config.valueAxis = 'vertical';
                     _.each($scope.curWidget.config.values, function (v) {
@@ -716,6 +738,30 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     });
                     break;
                 case 'hotMapBmap':
+                    $scope.curWidget.config.values.push({name: '', cols: []});
+                    _.each(oldConfig.values, function (v) {
+                        _.each(v.cols, function (c) {
+                            $scope.curWidget.config.values[0].cols.push(c);
+                        });
+                    });
+                    $scope.curWidget.config.selects = angular.copy($scope.columns);
+                    _.each($scope.curWidget.config.values, function (v) {
+                        v.style = 'bg-aqua';
+                    });
+                    break;
+                case 'scatterMap':
+                    $scope.curWidget.config.values.push({name: '', cols: []});
+                    _.each(oldConfig.values, function (v) {
+                        _.each(v.cols, function (c) {
+                            $scope.curWidget.config.values[0].cols.push(c);
+                        });
+                    });
+                    $scope.curWidget.config.selects = angular.copy($scope.columns);
+                    _.each($scope.curWidget.config.values, function (v) {
+                        v.style = 'bg-aqua';
+                    });
+                    break;
+                case 'scatterMapBmap':
                     $scope.curWidget.config.values.push({name: '', cols: []});
                     _.each(oldConfig.values, function (v) {
                         _.each(v.cols, function (c) {
@@ -918,6 +964,26 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     }];
                     $scope.curWidget.config.filters = new Array();
                     break;
+                case 'scatterMap':
+                    $scope.curWidget.config.selects = angular.copy($scope.columns);
+                    $scope.curWidget.config.keys = new Array();
+                    $scope.curWidget.config.groups = new Array();
+                    $scope.curWidget.config.values = [{
+                        name: '',
+                        cols: []
+                    }];
+                    $scope.curWidget.config.filters = new Array();
+                    break;
+                case 'scatterMapBmap':
+                    $scope.curWidget.config.selects = angular.copy($scope.columns);
+                    $scope.curWidget.config.keys = new Array();
+                    $scope.curWidget.config.groups = new Array();
+                    $scope.curWidget.config.values = [{
+                        name: '',
+                        cols: []
+                    }];
+                    $scope.curWidget.config.filters = new Array();
+                    break;
             }
             addWatch();
         };
@@ -955,7 +1021,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             $scope.loadingPre = true;
             var charType = $scope.curWidget.config.chart_type;
             //百度地图特殊处理
-            if(charType == 'markLineMapBmap' || charType == 'hotMapBmap'){
+            if(charType == 'markLineMapBmap' || charType == 'hotMapBmap' || charType == 'scatterMapBmap'){
                 chartService.renderBmap($('#preview_widget'), {
                     config: $scope.curWidget.config,
                     datasource: $scope.datasource ? $scope.datasource.id : null,
@@ -970,7 +1036,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 // 具体原因没有找到，求大神帮忙解决，thanks！
                 $('#preview_widget').html("<div id='preview' style='min-height: 300px; user-select: text;'></div>");
                 // --- end ---
-                chartService.render($('#preview_widget'), {
+                chartService.render($('#preview'), {
                     config: $scope.curWidget.config,
                     datasource: $scope.datasource ? $scope.datasource.id : null,
                     query: $scope.curWidget.query,
@@ -1037,6 +1103,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                             $scope.previewDivWidth = 12;
                             break;
                         case 'hotMap':
+                            $scope.previewDivWidth = 12;
+                            break;
+                        case 'scatterMap':
                             $scope.previewDivWidth = 12;
                             break;
                     }
@@ -1155,6 +1224,15 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             });
         };
 
+        $scope.editCurWgt = function() {
+            var wgt = _.find($scope.widgetList, function (w) {
+                return w.id == $scope.widgetId;
+            });
+            if (wgt) {
+                $scope.editWgt(wgt);
+            }
+        };
+
         var doEditWgt = function (widget) {
             cleanPreview();
             $timeout(function () {
@@ -1187,6 +1265,16 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             });
             addWatch();
         };
+
+        $scope.doCancel = function() {
+            if ($scope.optFlag == 'new') {
+                $scope.newConfig();
+                $scope.filterSelect = {};
+                cleanPreview();
+            } else {
+                $scope.editCurWgt();
+            }
+        }
 
         $scope.filterDimension = function (e) {
             if (e.type == 'level') {
@@ -1313,8 +1401,6 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             _.each(cols, function (e) {
                 if (e.type == 'exp') {
                     $scope.expressions.push(e);
-                } else {
-                    $scope.curWidget.config.selects.push(e.col);
                 }
             });
         };
@@ -1716,8 +1802,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 return e.code == $scope.curWidget.config.province.code;
             });
             if(province && province.cities){
-                $scope.cities = province.cities
+                $scope.cities = province.cities;
             }else if($scope.curWidget.config.city && $scope.curWidget.config.city.code){
+                $scope.cities = [];
                 $scope.curWidget.config.city.code="";
             }
         }

@@ -1,9 +1,6 @@
 /**
  * Created by jintian on 2017/7/26.
  */
-/**
- * Created by Fine on 2016/12/13.
- */
 cBoard.service('chartMarkLineMapService', function () {
     this.render = function (containerDom, option, scope, persist) {
         return new CBoardEChartRender(containerDom, option).chart(null, persist);
@@ -158,10 +155,10 @@ cBoard.service('chartMarkLineMapService', function () {
                 mapOption = {
                     legend: {
                         orient: 'vertical',
-                        top: 'bottom',
-                        left: 'right',
-                        data: optionData,
-                        selectedMode: 'multiple'
+                        top: 'top',
+                        left: 'left',
+                        selectedMode: 'multiple',
+                        data: optionData
                     },
                     geo: {
                         map: code,
