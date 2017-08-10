@@ -16,9 +16,20 @@ cBoard.service('chartHotMapBmapService', function () {
         var max = 0;
         var min = 0;
         var seriesData = [];
-        var seriesName = data.series[0][0];
+        var addressN;
+        var addressL;
         for(var j = 0; data.keys[0] && j < data.keys.length; j++){
-            seriesData[j] = [parseFloat(data.keys[j][0]),parseFloat(data.keys[j][1]),parseFloat(data.data[0][j])];
+            if(data.keys[j].length > 1){
+                addressN = parseFloat(data.keys[j][0]);
+                addressL = parseFloat(data.keys[j][1]);
+            }else if(data.keys[j].length = 1){
+                addressN = parseFloat(data.keys[j][0].split(",")[0]);
+                addressL = parseFloat(data.keys[j][0].split(",")[1]);
+            }else{
+                addressN = null;
+                addressL = null;
+            }
+            seriesData[j] = [addressN,addressL,parseFloat(data.data[0][j])];
             if(max < parseInt(data.data[0][j])){
                 max = parseInt(data.data[0][j]);
             }
