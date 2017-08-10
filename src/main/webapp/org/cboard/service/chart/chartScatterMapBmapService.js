@@ -33,9 +33,13 @@ cBoard.service('chartScatterMapBmapService', function () {
                     addressN = null;
                     addressL = null;
                 }
+
+                if(max < parseFloat(data.data[j][i])){
+                    max = parseFloat(data.data[j][i]);
+                }
                 serieData.push({
                     name:addressName,
-                    value:[addressN,addressL,data.data[j][i]]
+                    value:[addressN,addressL,parseFloat(data.data[j][i])]
                 })
 
             }
@@ -44,7 +48,7 @@ cBoard.service('chartScatterMapBmapService', function () {
                 {
                     name: data.series[j][0],
                     type: 'scatter',
-                    coordinateSystem: 'geo',
+                    coordinateSystem: 'bmap',
                     data: serieData,
                     symbolSize: function (val) {
                         return val[2] * 20 / max;
@@ -58,12 +62,7 @@ cBoard.service('chartScatterMapBmapService', function () {
                         emphasis: {
                             show: true
                         }
-                    }/*,
-                 itemStyle: {
-                 normal: {
-                 color: '#fff'
-                 }
-                 }*/
+                    }
                 }
             );
         }
@@ -184,7 +183,7 @@ cBoard.service('chartScatterMapBmapService', function () {
                 orient: 'vertical',
                 top: 'top',
                 left: 'left',
-                selectedMode: 'multiple',
+                selectedMode: 'single',
                 data: optionData
             },
             tooltip: {
