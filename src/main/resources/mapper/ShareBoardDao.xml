@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.cboard.dao.ShareBoardDao">
+
+    <insert id="save" parameterType="org.cboard.pojo.DashboardShareBoard">
+        INSERT INTO dashboard_shareboard (uid,userId,status,boardId) VALUES (#{uid},#{userId},
+        <choose>
+            <when test="status == null">
+                'open'
+            </when>
+            <otherwise>
+                #{userStatus}
+            </otherwise>
+        </choose>
+        ,#{boardId})
+    </insert>
+
+    <select id="getOpenShareBoard" resultType="org.cboard.pojo.DashboardShareBoard" parameterType="java.lang.String">
+        select uid,userId,status,boardId from dashboard_shareboard
+        where uid = #{uid} and status =  'open'
+    </select>
+</mapper>

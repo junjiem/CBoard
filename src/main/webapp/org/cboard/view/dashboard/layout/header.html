@@ -39,5 +39,20 @@
                 <span ng-show="exportStatus"><i class="fa fa-spinner fa-spin"></i> Loading</span>
             </button>
         </div>
+
+        <div style="display: inline-block" ng-click="share(true)">
+            <button class="btn btn-primary btn-sm">
+                <span><i class="fa fa-share"></i>&nbsp;{{"COMMON.SHARE" | translate}}</span>
+            </button>
+        </div>
+    </div>
+    <div class="input-group input-group-sm" style="width: 257px;float: right;margin-top: 15px;" ng-show="showUrl">
+        <input class="form-control"  style="min-width: 120px"
+                id="shareUrl">
+        <span class="input-group-btn">
+               <button type="button" class="btn btn-success" ng-click="closeShareUrl()">
+                   <i class="fa fa-close"></i>
+               </button>
+        </span>
     </div>
 </section>

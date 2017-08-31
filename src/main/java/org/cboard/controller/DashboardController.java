@@ -21,11 +21,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -387,6 +385,13 @@ public class DashboardController {
         return new ResponseEntity<>(boardService.exportBoard(id, userid), headers, HttpStatus.CREATED);
     }
 
+    @RequestMapping(value = "/shareBoard")
+    public String shareBoard(@RequestParam(name = "id") Long id,HttpServletRequest request) {
+        String userid = authenticationService.getCurrentUser().getUserId();
+        String contentPath = request.getRequestURL().toString().replace(request.getRequestURI(),"");
+        return boardService.shareBoard(id, userid,contentPath);
+    }
+
     @RequestMapping(value = "/tableToxls")
     public ResponseEntity<byte[]> tableToxls(@RequestParam(name = "data") String data) {
         HSSFWorkbook wb = xlsProcessService.tableToxls(JSONObject.parseObject(data));
@@ -415,7 +420,6 @@ public class DashboardController {
     }
 
     @RequestMapping(value = "/saveBoardParam")
-    @Transactional
     public String saveBoardParam(@RequestParam(name = "boardId") Long boardId, @RequestParam(name = "config") String config) {
         String userid = authenticationService.getCurrentUser().getUserId();
         if (boardId == null) {

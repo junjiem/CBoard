@@ -140,6 +140,19 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         });
     };
 
+    $scope.share = function(){
+        $http.post("dashboard/shareBoard.do", {
+            id: $stateParams.id
+        }).success(function (serviceStatus) {
+            $("#shareUrl").val(serviceStatus.url);
+            $scope.showUrl = true;
+        });
+    };
+
+    $scope.closeShareUrl =  function (){
+        $scope.showUrl = false;
+    }
+
     var refreshParam = function () {
         _.each($scope.board.layout.rows, function (row) {
             _.each(row.params, function (param) {
