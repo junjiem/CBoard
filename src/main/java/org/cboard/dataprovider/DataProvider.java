@@ -38,6 +38,7 @@ public abstract class DataProvider {
     protected Map<String, String> dataSource;
     protected Map<String, String> query;
     private int resultLimit;
+    private boolean isUsedForTest = false;
     private long interval = 12 * 60 * 60; // second
 
     public static final String NULL_STRING = "#NULL";
@@ -49,6 +50,13 @@ public abstract class DataProvider {
 
     public abstract boolean doAggregationInDataSource();
 
+    public boolean isDataSourceAggInstance() {
+        if (this instanceof Aggregatable && doAggregationInDataSource()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
     /**
      * get the aggregated data by user's widget designer
      *
@@ -56,7 +64,7 @@ public abstract class DataProvider {
      */
     public final AggregateResult getAggData(AggConfig ac, boolean reload) throws Exception {
         evalValueExpression(ac);
-        if (this instanceof Aggregatable && doAggregationInDataSource()) {
+        if (isDataSourceAggInstance()) {
             return ((Aggregatable) this).queryAggData(ac);
         } else {
             checkAndLoad(reload);
@@ -66,7 +74,7 @@ public abstract class DataProvider {
 
     public final String getViewAggDataQuery(AggConfig config) throws Exception {
         evalValueExpression(config);
-        if (this instanceof Aggregatable && doAggregationInDataSource()) {
+        if (isDataSourceAggInstance()) {
             return ((Aggregatable) this).viewAggDataQuery(config);
         } else {
             return "Not Support";
@@ -82,7 +90,7 @@ public abstract class DataProvider {
     public final String[] getDimVals(String columnName, AggConfig config, boolean reload) throws Exception {
         String[] dimVals = null;
         evalValueExpression(config);
-        if (this instanceof Aggregatable && doAggregationInDataSource()) {
+        if (isDataSourceAggInstance()) {
             dimVals = ((Aggregatable) this).queryDimVals(columnName, config);
         } else {
             checkAndLoad(reload);
@@ -97,7 +105,7 @@ public abstract class DataProvider {
 
     public final String[] getColumn(boolean reload) throws Exception {
         String[] columns = null;
-        if (this instanceof Aggregatable && doAggregationInDataSource()) {
+        if (isDataSourceAggInstance()) {
             columns = ((Aggregatable) this).getColumn();
         } else {
             checkAndLoad(reload);
@@ -108,11 +116,13 @@ public abstract class DataProvider {
     }
 
     private void checkAndLoad(boolean reload) throws Exception {
-        String key = getLockKey(dataSource, query);
+        String key = getLockKey();
         synchronized (key.intern()) {
             if (reload || !innerAggregator.checkExist()) {
                 String[][] data = getData();
-                innerAggregator.loadData(data, interval);
+                if (data != null) {
+                    innerAggregator.loadData(data, interval);
+                }
                 logger.info("loadData {}", key);
             }
         }
@@ -155,8 +165,10 @@ public abstract class DataProvider {
         return list.stream();
     }
 
-    private String getLockKey(Map<String, String> dataSource, Map<String, String> query) {
-        return Hashing.md5().newHasher().putString(JSONObject.toJSON(dataSource).toString() + JSONObject.toJSON(query).toString(), Charsets.UTF_8).hash().toString();
+    public String getLockKey() {
+        String dataSourceStr = JSONObject.toJSON(dataSource).toString();
+        String queryStr = JSONObject.toJSON(query).toString();
+        return Hashing.md5().newHasher().putString(dataSourceStr + queryStr, Charsets.UTF_8).hash().toString();
     }
 
     public List<DimensionConfig> filterCCList2DCList(List<ConfigComponent> filters) {
@@ -183,6 +195,10 @@ public abstract class DataProvider {
 
     abstract public String[][] getData() throws Exception;
 
+    public void test() throws Exception {
+        getData();
+    }
+
     public void setDataSource(Map<String, String> dataSource) {
         this.dataSource = dataSource;
     }
@@ -203,8 +219,41 @@ public abstract class DataProvider {
         this.interval = interval;
     }
 
+    public InnerAggregator getInnerAggregator() {
+        return innerAggregator;
+    }
+
     public void setInnerAggregator(InnerAggregator innerAggregator) {
         this.innerAggregator = innerAggregator;
+    }
+
+    public boolean isUsedForTest() {
+        return isUsedForTest;
+    }
+
+    public void setUsedForTest(boolean usedForTest) {
+        isUsedForTest = usedForTest;
+    }
+
+    public static ConfigComponent separateNull(ConfigComponent configComponent) {
+        if (configComponent instanceof DimensionConfig) {
+            DimensionConfig cc = (DimensionConfig) configComponent;
+            if (("=".equals(cc.getFilterType()) || "≠".equals(cc.getFilterType())) && cc.getValues().size() > 1 &&
+                    cc.getValues().stream().anyMatch(s -> DataProvider.NULL_STRING.equals(s))) {
+                CompositeConfig compositeConfig = new CompositeConfig();
+                compositeConfig.setType("=".equals(cc.getFilterType()) ? "OR" : "AND");
+                cc.setValues(cc.getValues().stream().filter(s -> !DataProvider.NULL_STRING.equals(s)).collect(Collectors.toList()));
+                compositeConfig.getConfigComponents().add(cc);
+                DimensionConfig nullCc = new DimensionConfig();
+                nullCc.setColumnName(cc.getColumnName());
+                nullCc.setFilterType(cc.getFilterType());
+                nullCc.setValues(new ArrayList<>());
+                nullCc.getValues().add(DataProvider.NULL_STRING);
+                compositeConfig.getConfigComponents().add(nullCc);
+                return compositeConfig;
+            }
+        }
+        return configComponent;
     }
 
 }
