@@ -11,17 +11,17 @@ import org.cboard.pojo.DashboardBoard;
 import org.cboard.pojo.DashboardWidget;
 import org.cboard.services.persist.PersistContext;
 import org.cboard.services.persist.excel.XlsProcessService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
 
 /**
  * Created by yfyuan on 2016/8/23.
@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 @Repository
 public class BoardService {
 
+    private Logger LOG = LoggerFactory.getLogger(this.getClass());
     @Autowired
     private BoardDao boardDao;
 
@@ -99,6 +100,8 @@ public class BoardService {
         board.setCategoryId(jsonObject.getLong("categoryId"));
         board.setLayout(jsonObject.getString("layout"));
         board.setId(jsonObject.getLong("id"));
+        board.setUpdateTime(new Timestamp(Calendar.getInstance().getTimeInMillis()));
+
 
         Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("board_id", board.getId());
@@ -117,7 +120,7 @@ public class BoardService {
             boardDao.delete(id, userId);
             return new ServiceStatus(ServiceStatus.Status.Success, "success");
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error("", e);
             return new ServiceStatus(ServiceStatus.Status.Fail, e.getMessage());
         }
     }
@@ -133,7 +136,7 @@ public class BoardService {
             outputStream.close();
             return outputStream.toByteArray();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("", e);
         }
         return null;
     }

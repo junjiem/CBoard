@@ -276,7 +276,6 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 $scope.datasetList = response;
                 if (callback) {
                     callback();
-                    $scope.switchLiteMode(true);
                 }
             });
         };
@@ -320,6 +319,11 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             });
         };
 
+        $scope.viewExp = function(exp) {
+            ModalUtils.alert({title: translate('CONFIG.COMMON.CUSTOM_EXPRESSION') + ': ' + exp.alias, body: exp.exp},
+                "modal-info", 'lg');
+        }
+
         $scope.editExp = function (col) {
             var columnObjs = schemaToSelect($scope.schema);
             var aggregate = $scope.value_aggregate_types;
@@ -348,38 +352,28 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
                 backdrop: false,
                 size: 'lg',
+                scope: $scope,
                 controller: function ($scope, $uibModalInstance) {
                     $scope.data = data;
                     $scope.curWidget = curWidget;
                     $scope.columnObjs = columnObjs;
                     $scope.aggregate = aggregate;
+                    $scope.expressions = curWidget.expressions;
                     $scope.alerts = [];
                     $scope.close = function () {
                         $uibModalInstance.close();
                     };
                     var columns = _.map(columnObjs, function (o) { return o.column; });
-                    $scope.expAceOpt = expEditorOptions(columns, aggregate);
+                    $scope.expAceOpt = expEditorOptions($scope.selects, aggregate, function(_editor) {
+                        $scope.expAceEditor = _editor;
+                        $scope.expAceSession = _editor.getSession();
+                        _editor.focus();
+                    });
                     $scope.addToken = function (str, agg) {
-                        var tc = document.getElementById("expression_area");
-                        var tclen = $scope.data.expression.length;
-                        tc.focus();
-                        var selectionIdx = 0;
-                        if (typeof document.selection != "undefined") {
-                            document.selection.createRange().text = str;
-                            selectionIdx = str.length - 1;
-                        }
-                        else {
-                            var a = $scope.data.expression.substr(0, tc.selectionStart);
-                            var b = $scope.data.expression.substring(tc.selectionStart, tclen);
-                            $scope.data.expression = a + str;
-                            selectionIdx = $scope.data.expression.length - 1;
-                            $scope.data.expression += b;
-                        }
-                        if (!agg) {
-                            selectionIdx++;
-                        }
-                        tc.selectionStart = selectionIdx;
-                        tc.selectionEnd = selectionIdx;
+                        var editor = $scope.expAceEditor;
+                        editor.session.insert(editor.getCursorPosition(), str);
+                        editor.focus();
+                        if (agg) editor.getSelection().moveCursorLeft();
                     };
                     $scope.verify = function () {
                         $scope.alerts = [];
@@ -394,6 +388,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                             ModalUtils.alert(translate('CONFIG.WIDGET.ALIAS') + translate('COMMON.NOT_EMPTY'), "modal-warning", "lg");
                             return;
                         }
+                        $scope.data.expression = $scope.expAceSession.getValue();
                         ok($scope.data);
                         $uibModalInstance.close();
                     };
@@ -455,7 +450,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     return ds.id == $scope.curWidget.datasetId;
                 }).data.expressions;
                 var exp = _.find(dsExp, function (e) {
-                    return e.id && o.id == e.id;
+                    return (e.id && o.id == e.id) || o.alias == e.alias;
                 });
                 return !_.isUndefined(exp);
             }
@@ -1129,6 +1124,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             if (loadFromDataset) {
                 $scope.schema = $scope.dataset.data.schema;
                 $scope.alerts = [];
+                $scope.switchLiteMode(true);
             } else {
                 $scope.loading = true;
                 dataService.getColumns({
@@ -1144,6 +1140,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                             _.each(dps.columns, function (e) {
                                 $scope.schema.selects.push({column: e});
                             });
+                            $scope.switchLiteMode(true);
                         } else {
                             $scope.alerts = [{msg: dps.msg, type: 'danger'}];
                         }
@@ -1475,7 +1472,11 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         $scope.applyModelChanges = function () {
             return !$scope.ignoreChanges;
         };
-
+        $scope.showInfo = function () {
+            if (!checkTreeNode("info")) return;
+            var content = getSelectedWidget();
+            ModalUtils.info(content,"modal-info", "lg");
+        };
         $scope.copyNode = function () {
             if (!checkTreeNode("copy")) return;
             $scope.copyWgt(getSelectedWidget());
@@ -1564,7 +1565,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             $scope.curWidget.query = {};
             $http.get('dashboard/getConfigParams.do?type=' + $scope.datasource.type + '&page=widget.html').then(function (response) {
                 $scope.params = response.data;
-                for (i in $scope.params) {
+                for (var i in $scope.params) {
                     var name = $scope.params[i].name;
                     var value = $scope.params[i].value;
                     var checked = $scope.params[i].checked;
@@ -1594,6 +1595,33 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         }
         /** js tree related End... **/
 
+        $scope.targetHighlight = {
+            row: false, column: false, value: false, filter: false
+        };
+
+        $scope.onDragstart = function (type) {
+            switch (type) {
+                case 'dimension':
+                    $scope.targetHighlight = {row: true, column: true, value: false, filter: true};
+                    break;
+                case 'measure':
+                case 'exp':
+                    $scope.targetHighlight = {row: false, column: false, value: true, filter: false};
+                    break;
+                case 'filterGroup':
+                    $scope.targetHighlight.filter = true;
+                    break;
+                case 'select':
+                    $scope.targetHighlight = {row: true, column: true, value: true, filter: true};
+                    break;
+            }
+        };
+
+        $scope.onDragCancle = function () {
+            $scope.targetHighlight = {
+                row: false, column: false, value: false, filter: false
+            };
+        };
 
         /** Ace Editor Starer... **/
         $scope.queryAceOpt = datasetEditorOptions();

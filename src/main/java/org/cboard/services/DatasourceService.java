@@ -8,9 +8,13 @@ import org.cboard.dataprovider.annotation.DatasourceParameter;
 import org.cboard.dto.ViewDashboardDatasource;
 import org.cboard.pojo.DashboardDatasource;
 import org.cboard.services.role.RolePermission;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +27,8 @@ import java.util.stream.Collectors;
  */
 @Repository
 public class DatasourceService {
+
+    private Logger LOG = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private DatasourceDao datasourceDao;
@@ -39,7 +45,7 @@ public class DatasourceService {
                     }
                 });
             } catch (Exception ex) {
-                ex.printStackTrace();
+                LOG.error("", e);
             }
         });
         return vlist;
@@ -72,6 +78,7 @@ public class DatasourceService {
         datasource.setType(jsonObject.getString("type"));
         datasource.setConfig(jsonObject.getString("config"));
         datasource.setId(jsonObject.getLong("id"));
+        datasource.setUpdateTime(new Timestamp(Calendar.getInstance().getTimeInMillis()));
 
         Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("datasource_id", datasource.getId());

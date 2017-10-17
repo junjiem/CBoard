@@ -296,7 +296,7 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
                 aggregation = json(d.getColumnName(), JSONObject.parseObject(d.getCustom()).get("esBucket"));
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error("", e);
         }
         return aggregation;
     }
@@ -350,7 +350,7 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
             long minTs = coalesce(response.getJSONObject("aggregations").getJSONObject(minKey).getLong("value"), 0l);
             intervalStr = dateInterval(minTs, maxTs);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error("", e);
         }
         return json(columnName, dateHistAggregation(columnName, intervalStr, 0));
     }
@@ -540,13 +540,16 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
 
     @Override
     public String[][] getData() throws Exception {
+        return null;
+    }
+
+    @Override
+    public void test() throws Exception {
         HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
         HttpGet httpget = new HttpGet(getMappingUrl());
         HttpResponse httpResponse = httpClientBuilder.build().execute(httpget, getHttpContext());
         String response = EntityUtils.toString(httpResponse.getEntity(), dataSource.get(CHARSET));
-        if (httpResponse.getStatusLine().getStatusCode() == 200) {
-            return new String[0][];
-        } else {
+        if (httpResponse.getStatusLine().getStatusCode() != 200) {
             throw new Exception(response);
         }
     }

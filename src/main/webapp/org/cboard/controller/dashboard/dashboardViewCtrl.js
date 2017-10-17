@@ -135,8 +135,9 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
             $(".forExcel").click();
             aForExcel.remove();
             $scope.exportStatus = false;
-        }).error(function (data, status, headers, config) {
+        }).error(function (data, status, headers, config, statusText) {
             $scope.exportStatus = false;
+            ModalUtils.alert("Export error, please ask admin to check server side log.", "modal-warning", "lg");
         });
     };
 
@@ -151,14 +152,35 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         paramToFilter();
     };
 
+    var initDsReloadStatus = function(reload) {
+        var dsReloadStatus = new Map();
+        _.each($scope.board.layout.rows, function(row) {
+            _.each(row.widgets, function (widget) {
+                var dataSetId = widget.widget.data.datasetId;
+                if (dataSetId != undefined) {
+                    dsReloadStatus.set(dataSetId, reload);
+                }
+            });
+        });
+        return dsReloadStatus;
+    };
+
     var loadWidget = function (reload) {
         paramToFilter();
+        var dsReloadStatus = initDsReloadStatus(reload);
         _.each($scope.board.layout.rows, function (row) {
             _.each(row.widgets, function (widget) {
                 if (!_.isUndefined(widget.hasRole) && !widget.hasRole) {
                     return;
                 }
-                buildRender(widget, reload);
+                var dataSetId = widget.widget.data.datasetId;
+                var needReload = reload;
+                // avoid repeat load offline dataset data
+                if (dataSetId != undefined && reload) {
+                    var needReload = dsReloadStatus.get(dataSetId) ? true : false;
+                    dsReloadStatus.set(dataSetId, false);
+                }
+                buildRender(widget, needReload);
                 widget.loading = true;
                 if ($scope.board.layout.type == 'timeline') {
                     if (row.show) {
