@@ -34,12 +34,17 @@ cBoard.service('chartLineService', function ($state, $window) {
             sum_data[j] = sum;
         }
 
+
+
+        //主要用于判断是否要将折线起始点和x轴紧贴
+        var line_type;
         for (var i = 0; i < aggregate_data.length; i++) {
             var joined_values = casted_values[i].join('-');
             var s = angular.copy(newValuesConfig[joined_values]);
             s.name = joined_values;
             s.data = aggregate_data[i];
             s.barMaxWidth = 40;
+            line_type = s.type;
             if (s.type == 'stackbar') {
                 s.type = 'bar';
                 s.stack = s.valueAxisIndex.toString();
@@ -49,6 +54,53 @@ cBoard.service('chartLineService', function ($state, $window) {
                 });
                 s.type = 'bar';
                 s.stack = s.valueAxisIndex.toString();
+            } else if (s.type == "arealine") {
+                s.type = "line";
+                s.smooth = true;
+                s.symbol = 'none';
+                s.sampling = 'average';
+                s.itemStyle = {
+                    normal: {
+                        color: 'rgb(255, 70, 131)'
+                    }
+                };
+                s.areaStyle = {
+                    normal: {
+                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                            offset: 0,
+                            color: 'rgb(255, 158, 68)'
+                        }, {
+                            offset: 1,
+                            color: 'rgb(255, 70, 131)'
+                        }])
+                    }
+                }
+            } else if (s.type == "stackline") {
+                s.type = "line";
+                s.stack = '总量';
+                s.areaStyle = {normal: {}};
+                if(i == aggregate_data.length - 1){
+                    s.label = {
+                        normal: {
+                            show: true,
+                            position: 'top',
+                            formatter: function(params) {
+                                var formatter_result = 0;
+                                for(var j = 0;j < aggregate_data.length;j ++){
+                                    formatter_result = formatter_result + aggregate_data[j][params.dataIndex];
+                                }
+                                return formatter_result;
+                            }
+                        }
+                    }
+                }
+            }else if (s.type == 'percentline') {
+                s.data = _.map(aggregate_data[i], function (e, i) {
+                    return [i, (e / sum_data[i] * 100).toFixed(2), e];
+                });
+                s.stack = s.valueAxisIndex.toString();
+                s.type = "line";
+                s.areaStyle = {normal: {}};
             }
             if (chartConfig.valueAxis == 'horizontal') {
                 s.xAxisIndex = s.valueAxisIndex;
@@ -65,7 +117,7 @@ cBoard.service('chartLineService', function ($state, $window) {
                     return numbro(value).format("0a.[0000]");
                 }
             };
-            if (axis.series_type == "percentbar") {
+            if (axis.series_type == "percentbar" || axis.series_type == "percentline") {
                 axis.min = 0;
                 axis.max = 100;
             } else {
@@ -84,6 +136,7 @@ cBoard.service('chartLineService', function ($state, $window) {
             tunningOpt.ctgLabelRotate ? labelRotate = tunningOpt.ctgLabelRotate : 0;
         }
 
+
         var categoryAxis = {
             type: 'category',
             data: string_keys,
@@ -92,6 +145,9 @@ cBoard.service('chartLineService', function ($state, $window) {
                 rotate: labelRotate
             }
         };
+        if(line_type == 'arealine' || line_type == 'stackline' || line_type == 'percentline'){
+            categoryAxis.boundaryGap = false;
+        }
 
         var echartOption = {
             grid: angular.copy(echartsBasicOption.grid),
@@ -113,6 +169,12 @@ cBoard.service('chartLineService', function ($state, $window) {
                         }
                     }
                     return s;
+                },
+                axisPointer: {
+                    type: 'cross',
+                    label: {
+                        backgroundColor: '#6a7985'
+                    }
                 }
             },
             xAxis: chartConfig.valueAxis == 'horizontal' ? valueAxis : categoryAxis,
