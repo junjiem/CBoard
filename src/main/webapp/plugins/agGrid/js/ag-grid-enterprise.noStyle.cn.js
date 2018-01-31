@@ -20615,23 +20615,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	var gridOptionsWrapper_1 = __webpack_require__(4);
 	var utils_1 = __webpack_require__(8);
 	var DEFAULT_TRANSLATIONS = {
-	    loadingOoo: 'Loading...',
-	    equals: 'Equals',
-	    notEqual: 'Not equal',
-	    lessThan: 'Less than',
-	    greaterThan: 'Greater than',
-	    inRange: 'In range',
-	    lessThanOrEqual: 'Less than or equals',
-	    greaterThanOrEqual: 'Greater than or equals',
-	    filterOoo: 'Filter...',
-	    contains: 'Contains',
-	    notContains: 'Not contains',
-	    startsWith: 'Starts with',
-	    endsWith: 'Ends with',
-	    searchOoo: 'Search...',
+	    loadingOoo: '加载...',
+	    equals: '等于',
+	    notEqual: '不等于',
+	    lessThan: '小于',
+	    greaterThan: '大于',
+	    inRange: '范围区间',
+	    lessThanOrEqual: '小于等于',
+	    greaterThanOrEqual: '大于等于',
+	    filterOoo: '过滤值...',
+	    contains: '包含',
+	    notContains: '不包含',
+	    startsWith: '匹配开头',
+	    endsWith: '匹配结尾',
+	    searchOoo: '搜索...',
 	    selectAll: '选择全部',
-	    applyFilter: 'Apply Filter',
-	    clearFilter: 'Clear Filter'
+	    applyFilter: '开始过滤',
+	    clearFilter: '清空过滤'
 	};
 	/**
 	 * T(ype) The type of this filter. ie in DateFilter T=Date
@@ -24681,13 +24681,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	    PaginationComp.prototype.getTemplate = function () {
 	        var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-	        var strPage = localeTextFunc('page', 'Page');
-	        var strTo = localeTextFunc('to', 'to');
-	        var strOf = localeTextFunc('of', 'of');
-	        var strFirst = localeTextFunc('first', 'First');
-	        var strPrevious = localeTextFunc('previous', 'Previous');
-	        var strNext = localeTextFunc('next', 'Next');
-	        var strLast = localeTextFunc('last', 'Last');
+	        var strPage = localeTextFunc('page', '页号');
+	        var strTo = localeTextFunc('to', '到');
+	        var strOf = localeTextFunc('of', '共');
+	        var strFirst = localeTextFunc('first', '第一页');
+	        var strPrevious = localeTextFunc('previous', '上一页');
+	        var strNext = localeTextFunc('next', '下一页');
+	        var strLast = localeTextFunc('last', '结尾页');
 	        return "<div class=\"ag-paging-panel ag-font-style\">\n                <span ref=\"eSummaryPanel\" class=\"ag-paging-row-summary-panel\">\n                    <span ref=\"lbFirstRowOnPage\"></span> " + strTo + " <span ref=\"lbLastRowOnPage\"></span> " + strOf + " <span ref=\"lbRecordCount\"></span>\n                </span>\n                <span class=\"ag-paging-page-summary-panel\">\n                    <button class=\"ag-paging-button\" ref=\"btFirst\">" + strFirst + "</button>\n                    <button class=\"ag-paging-button\" ref=\"btPrevious\">" + strPrevious + "</button>\n                    " + strPage + " <span ref=\"lbCurrent\"></span> " + strOf + " <span ref=\"lbTotal\"></span>\n                    <button class=\"ag-paging-button\" ref=\"btNext\">" + strNext + "</button>\n                    <button class=\"ag-paging-button\" ref=\"btLast\">" + strLast + "</button>\n                </span>\n            </div>";
 	    };
 	    PaginationComp.prototype.onBtNext = function () {
