@@ -27,9 +27,12 @@ cBoard.service('chartPieService', function ($state, $window) {
         var b = 100 / (casted_values.length * 9 + 1);
         var titles = [];
         for (var i = 0; i < aggregate_data.length; i++) {
+            var joined_values = casted_values[i].join('-');
+            var realType = angular.copy(newValuesConfig[joined_values]).type;
             var s = {
                 name: string_value[i],
                 type: 'pie',
+                realType:realType,
                 center: [5 * b + i * 9 * b + '%', '50%'],
                 data: [],
                 //roseType: 'angle'

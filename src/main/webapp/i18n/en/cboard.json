@@ -150,6 +150,7 @@
       "GRID":"Pivot Table",
       "KPI": "KPI",
       "PIE": "Pie",
+      "DOUGHNUT": "Doughnut",
       "LINE_BAR": "Line/Bar",
       "AREA_LINE":"Area Line",
       "STACKED_LINE":"Stacked Line",
