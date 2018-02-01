@@ -157,7 +157,8 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
         ];
         $scope.value_pie_types = [
             {name: translate('CONFIG.WIDGET.PIE'), value: 'pie'},
-            {name: translate('CONFIG.WIDGET.DOUGHNUT'), value: 'doughnut'}
+            {name: translate('CONFIG.WIDGET.DOUGHNUT'), value: 'doughnut'},
+            {name: translate('CONFIG.WIDGET.COXCOMB'), value: 'coxcomb'}
         ]
         $scope.china_map_types = [
             {name: translate('CONFIG.WIDGET.SCATTER_MAP'), value: 'scatter'},

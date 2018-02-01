@@ -151,6 +151,7 @@
       "KPI": "KPI",
       "PIE": "Pie",
       "DOUGHNUT": "Doughnut",
+      "COXCOMB": "Coxcomb",
       "LINE_BAR": "Line/Bar",
       "AREA_LINE":"Area Line",
       "STACKED_LINE":"Stacked Line",

@@ -52,6 +52,9 @@ cBoard.service('chartPieService', function ($state, $window) {
                     labelLine: {show: true}
                 }
             };
+            if(realType == 'coxcomb'){
+                s.roseType = 'angle';
+            }
             titles.push({
                 textAlign: 'center', textStyle: {
                     fontSize: 12,
