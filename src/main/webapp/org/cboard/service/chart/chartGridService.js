@@ -138,7 +138,7 @@ function gridDataProcess(chartConfig, casted_keys, casted_values, aggregate_data
         defaultColDef: {
             headerCheckboxSelection: isFirstColumn,
             checkboxSelection: isFirstColumn,
-        }
+        },
     }
 
     //设置option区域的功能
@@ -147,6 +147,7 @@ function gridDataProcess(chartConfig, casted_keys, casted_values, aggregate_data
     }
     return gridOption;
 }
+
 function getJsonLength(jsonData) {
     var length = 0;
     for (var l in jsonData) {

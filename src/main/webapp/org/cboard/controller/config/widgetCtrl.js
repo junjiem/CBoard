@@ -155,7 +155,11 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
             {name: translate('CONFIG.WIDGET.STACKED_BAR'), value: 'stackbar'},
             {name: translate('CONFIG.WIDGET.PERCENT_BAR'), value: 'percentbar'}
         ];
-
+        $scope.value_pie_types = [
+            {name: translate('CONFIG.WIDGET.PIE'), value: 'pie'},
+            {name: translate('CONFIG.WIDGET.DOUGHNUT'), value: 'doughnut'},
+            {name: translate('CONFIG.WIDGET.COXCOMB'), value: 'coxcomb'}
+        ]
         $scope.china_map_types = [
             {name: translate('CONFIG.WIDGET.SCATTER_MAP'), value: 'scatter'},
             {name: translate('CONFIG.WIDGET.HEAT_MAP'), value: 'heat'},
@@ -1014,7 +1018,7 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
                 return;
             }
 
-            if($scope.curWidget.config.chart_type == 'grid' && chartGridService.gridOption){
+            if ($scope.curWidget.config.chart_type == 'grid' && chartGridService.gridOption) {
                 o.data.config.gridConfig = chartGridService.gridOption.columnApi.getColumnState()
             }
 
