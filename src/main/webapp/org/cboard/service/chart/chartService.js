@@ -89,7 +89,7 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                     if (widget.config.chart_type == 'chinaMapBmap') {
                         chart.render(containerDom, option, scope, persist, data.drill);
                     } else if (widget.config.chart_type == 'grid') {
-                        chart.render(containerDom, option, scope, persist);
+                        chart.render(containerDom, option, scope, persist, data.chartConfig.gridConfig);
                     } else {
                         deferred.resolve(chart.render(containerDom, option, scope, persist, data.drill, relations, widget.config));
                     }

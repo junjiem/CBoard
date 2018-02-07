@@ -2,7 +2,7 @@
  * Created by yfyuan on 2016/8/12.
  */
 'use strict';
-cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $uibModal, dataService, ModalUtils, updateService, $filter, chartService, $timeout) {
+cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $uibModal, dataService, ModalUtils, updateService, $filter, chartService, $timeout, chartGridService) {
 
         var translate = $filter('translate');
         var updateUrl = "dashboard/updateWidget.do";
@@ -143,17 +143,18 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
             "funnel": true, "sankey": true, "radar": true, "map": true,
             "scatter": true, "gauge": true, "wordCloud": true, "treeMap": true,
             "heatMapCalendar": true, "heatMapTable": true, "liquidFill": true,
-            "areaMap": true, "contrast": true,"chinaMap":true,"chinaMapBmap":true,"relation":true
+            "areaMap": true, "contrast": true, "chinaMap": true, "chinaMapBmap": true, "relation": true
         };
 
         $scope.value_series_types = [
             {name: translate('CONFIG.WIDGET.LINE'), value: 'line'},
-            {name: translate('CONFIG.WIDGET.AREA_LINE'),value:'arealine'},
-            {name: translate('CONFIG.WIDGET.STACKED_LINE'),value:'stackline'},
-            {name: translate('CONFIG.WIDGET.PERCENT_LINE'),value:'percentline'},
+            {name: translate('CONFIG.WIDGET.AREA_LINE'), value: 'arealine'},
+            {name: translate('CONFIG.WIDGET.STACKED_LINE'), value: 'stackline'},
+            {name: translate('CONFIG.WIDGET.PERCENT_LINE'), value: 'percentline'},
             {name: translate('CONFIG.WIDGET.BAR'), value: 'bar'},
             {name: translate('CONFIG.WIDGET.STACKED_BAR'), value: 'stackbar'},
-            {name: translate('CONFIG.WIDGET.PERCENT_BAR'), value: 'percentbar'}
+            {name: translate('CONFIG.WIDGET.PERCENT_BAR'), value: 'percentbar'},
+            {name: translate('CONFIG.WIDGET.POLAR_BAR'), value:'polarbar'}
         ];
 
         $scope.china_map_types = [
@@ -171,6 +172,12 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
             {name: 'distinct', value: 'distinct'}
         ];
 
+        $scope.value_pie_types = [
+            {name: translate('CONFIG.WIDGET.PIE'), value: 'pie'},
+            {name: translate('CONFIG.WIDGET.DOUGHNUT'), value: 'doughnut'},
+            {name: translate('CONFIG.WIDGET.COXCOMB'), value: 'coxcomb'}
+        ]
+
         $scope.kpi_styles = [
             {name: translate('CONFIG.WIDGET.AQUA'), value: 'bg-aqua'},
             {name: translate('CONFIG.WIDGET.RED'), value: 'bg-red'},
@@ -181,7 +188,6 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
         $.getJSON('plugins/FineMap/mapdata/citycode.json', function (data) {
             $scope.provinces = data.provinces;
         });
-
 
 
         $scope.treemap_styles = [
@@ -244,8 +250,8 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
             heatMapTable: {keys: 2, groups: 2, filters: -1, values: 1},
             liquidFill: {keys: 0, groups: 0, filters: -1, values: 1},
             contrast: {keys: 1, groups: 0, filters: -1, values: 2},
-            chinaMap:{keys: 2, groups: -1, filters: -1, values: 2},
-            chinaMapBmap:{keys: 2, groups: -1, filters: -1, values: 2},
+            chinaMap: {keys: 2, groups: -1, filters: -1, values: 2},
+            chinaMapBmap: {keys: 2, groups: -1, filters: -1, values: 2},
             relation: {keys: 2, groups: 2, filters: -1, values: 1}
         };
 
@@ -308,7 +314,7 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
             });
         });
 
-        $scope.getCurDatasetName = function() {
+        $scope.getCurDatasetName = function () {
             if ($scope.customDs) {
                 return translate('CONFIG.WIDGET.NEW_QUERY');
             } else {
@@ -342,7 +348,7 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
             });
         };
 
-        $scope.viewExp = function(exp) {
+        $scope.viewExp = function (exp) {
             ModalUtils.alert({title: translate('CONFIG.COMMON.CUSTOM_EXPRESSION') + ': ' + exp.alias, body: exp.exp},
                 "modal-info", 'lg');
         }
@@ -386,8 +392,10 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
                     $scope.close = function () {
                         $uibModalInstance.close();
                     };
-                    var columns = _.map(columnObjs, function (o) { return o.column; });
-                    $scope.expAceOpt = expEditorOptions($scope.selects, aggregate, function(_editor) {
+                    var columns = _.map(columnObjs, function (o) {
+                        return o.column;
+                    });
+                    $scope.expAceOpt = expEditorOptions($scope.selects, aggregate, function (_editor) {
                         $scope.expAceEditor = _editor;
                         $scope.expAceSession = _editor.getSession();
                         _editor.focus();
@@ -648,6 +656,19 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
                     $scope.curWidget.config.valueAxis = 'vertical';
                     _.each($scope.curWidget.config.values, function (v) {
                         v.series_type = 'line';
+                        v.type = 'value';
+                    });
+                    break;
+                case 'pie':
+                    $scope.curWidget.config.values.push({name: '', cols: []});
+                    _.each(oldConfig.values, function (v) {
+                        _.each(v.cols, function (c) {
+                            $scope.curWidget.config.values[0].cols.push(c);
+                        });
+                    });
+                    $scope.curWidget.config.valueAxis = 'vertical';
+                    _.each($scope.curWidget.config.values, function (v) {
+                        v.series_type = 'pie';
                         v.type = 'value';
                     });
                     break;
@@ -931,6 +952,15 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
             });
         };
 
+        $scope.add_pie_value = function () {
+            $scope.curWidget.config.values.push({
+                name: '',
+                series_type: 'pie',
+                type: 'value',
+                cols: []
+            });
+        }
+
         $scope.add_china_map_value = function () {
             $scope.curWidget.config.values.push({
                 name: '',
@@ -947,15 +977,15 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
             });
         };
 
-        $scope.initColorPicker =  function (index) {
-            $timeout(function() {
-                $("#color_"+index).colorpicker()
-                    .on("changeColor", function(e){
-                        if($scope.curWidget.config.styles[e.target.id.split("_")[1]]){
+        $scope.initColorPicker = function (index) {
+            $timeout(function () {
+                $("#color_" + index).colorpicker()
+                    .on("changeColor", function (e) {
+                        if ($scope.curWidget.config.styles[e.target.id.split("_")[1]]) {
                             $scope.curWidget.config.styles[e.target.id.split("_")[1]].color = e.color.toHex();
                         }
                     });
-            }, 100,true);
+            }, 100, true);
         };
 
         var saveWgtCallBack = function (serviceStatus) {
@@ -1011,6 +1041,10 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
                     type: 'danger'
                 }];
                 return;
+            }
+
+            if($scope.curWidget.config.chart_type == 'grid' && chartGridService.gridOption){
+                o.data.config.gridConfig = chartGridService.gridOption.columnApi.getColumnState()
             }
 
             if ($scope.optFlag == 'new') {
@@ -1515,7 +1549,7 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
         $scope.showInfo = function () {
             if (!checkTreeNode("info")) return;
             var content = getSelectedWidget();
-            ModalUtils.info(content,"modal-info", "lg");
+            ModalUtils.info(content, "modal-info", "lg");
         };
         $scope.copyNode = function () {
             if (!checkTreeNode("copy")) return;

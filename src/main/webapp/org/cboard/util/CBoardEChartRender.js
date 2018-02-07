@@ -77,15 +77,28 @@ CBoardEChartRender.prototype.chart = function (group, persist) {
 
 CBoardEChartRender.prototype.changeSize = function (instance) {
     var o = instance.getOption();
-    var seriesType = o.series[0] ? o.series[0].type : null;
-    if (seriesType == 'pie') {
+    if (o.series[0] ? o.series[0].type : null) {
         var l = o.series.length;
         var b = instance.getWidth() / (l + 1 + l * 8)
         for (var i = 0; i < l; i++) {
+            var seriesType = o.series[i] ? o.series[i].realType : null;
             if ((b * 8) < (instance.getHeight() * 0.75)) {
-                o.series[i].radius = [0, b * 4];
+                if(seriesType == 'doughnut'){
+                    o.series[i].radius = [b * 3, b * 4];
+                } else if(seriesType == 'coxcomb'){
+                    o.series[i].radius = [b * 0.8, b * 4];
+                } else {
+                    o.series[i].radius = [0, b * 4];
+                }
+
             } else {
-                o.series[i].radius = [0, '75%'];
+                if(seriesType == 'doughnut'){
+                    o.series[i].radius = ['50%', '75%'];
+                }else if(seriesType == 'coxcomb'){
+                    o.series[i].radius = ['15%', '75%']
+                }else{
+                    o.series[i].radius = ['0', '75%'];
+                }
             }
         }
         instance.setOption(o);
@@ -129,6 +142,7 @@ CBoardEChartRender.prototype.addClick = function (chartConfig, relations, $state
 
         switch (chartConfig.chart_type) {
             case 'line':
+            case 'contrast':
             case 'scatter':
             case 'pie':
                 _.each(sourceField, function (field) {
@@ -275,7 +289,7 @@ CBoardEChartRender.prototype.addClick = function (chartConfig, relations, $state
         //触发关联图表刷新
         _.each(_.filter(links,function(e){return e.type=="widget"}), function(relation){
             var button = document.getElementsByName("reload_"+relation.targetId);
-            if(button){
+            if(button && button.length > 0){
                 button[button.length-1].click();
             }
         });
