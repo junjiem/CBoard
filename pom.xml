@@ -403,10 +403,10 @@
     </build>
     <profiles>
         <profile>
-            <id>env</id>
+            <id>jetty</id>
             <activation>
                 <property>
-                    <name>env</name>
+                    <name>jetty</name>
                 </property>
             </activation>
             <build>

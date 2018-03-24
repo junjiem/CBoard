@@ -1,0 +1,135 @@
+{
+  "name": "CBOARD",
+  "label": "CBoard",
+  "description": "最容易使用且自助开放式的BI商业智能分析平台",
+  "version": "0.4",
+  // 用户和组
+  "runAs": {
+    "user": "cboard",
+    "group": "cboard"
+  },
+  // 兼容性
+  "compatibility": {
+    "generation": 1,
+    "cdhVersion": {
+      "min": "5",
+      "max": "5"
+    }
+  },
+  "icon": "images/icon.png",
+  // 外部链接
+  "rolesWithExternalLinks": [
+    "CBOARD_WEBSERVER"
+  ],
+  // 操作
+  "commands": [
+    {
+      "name": "CBoardCreateMetadataTables",
+      "label": "创建CBoard的元数据库表",
+      "description": "创建CBoard的元数据库表",
+      "roleName": "CBOARD_WEBSERVER",
+      "roleCommand": "create_metadata_tables",
+      "runMode": "single"
+      // 单节点运行
+    }
+  ],
+  // 配置
+  "parameters": [
+    {
+      "name": "service_var1",
+      "label": "Service Var1 Label",
+      "description": "Service Var1 Description",
+      "configName": "service.var1.config",
+      "type": "string",
+      "default": "this is a default"
+    },
+    {
+      "name": "service_var2",
+      "label": "Service Var2 Label",
+      "description": "Service Var2 Description",
+      "required": "true",
+      "type": "long",
+      "default": 20,
+      "min": 1
+    }
+  ],
+  // 角色信息
+  "roles": [
+    {
+      "name": "CBOARD_WEBSERVER",
+      "label": "CBoard Web Server",
+      "pluralLabel": "CBoard Web Servers",
+      // CBOARD_WEBSERVER角色的【外部链接】信息
+      "externalLink": {
+        "name": "cboard_server_web_ui",
+        "label": "CBoard Web Server UI",
+        "url": "http://${host}:${server_web_port}"
+      },
+      // CBOARD_WEBSERVER角色的【启动】信息
+      "startRunner": {
+        "program": "scripts/control.sh",
+        // 传入的值
+        "args": [
+          "start"
+        ],
+        // 环境变量
+        "environmentVariables": {
+          "SERVER_WEB_PORT": "${server_web_port}"
+        }
+      },
+      // CBOARD_WEBSERVER角色的【操作】
+      "commands": [
+        {
+          "name": "create_metadata_tables",
+          "label": "CBOARD_WEBSERVER创建CBoard的元数据库表",
+          "description": "CBOARD_WEBSERVER创建CBoard的元数据库表",
+          // 期望的退出码
+          "expectedExitCodes": [
+            0
+          ],
+          // 所需的角色状态
+          //"requiredRoleState": "stopped",
+          "commandRunner": {
+            "program": "scripts/control.sh",
+            "args": [
+              "create_metadata_tables"
+            ]
+          }
+        }
+      ],
+      // CBOARD_WEBSERVER角色的【日志】信息
+      "logging": {
+        "dir": "/var/log/cboard",
+        "filename": "cboard-webserver-${host}.log",
+        "modifiable": true,
+        "configName": "cboard.log4j.dir",
+        "loggingType": "log4j"
+      },
+      // CBOARD_WEBSERVER角色的【配置】信息
+      "parameters": [
+        {
+          "name": "server_web_port",
+          "label": "CBoard Web服务的端口",
+          "configName": "cboard.server.ui.port",
+          "description": "这个参数是CBoard Web服务的端口值",
+          "required": "true",
+          "type": "port",
+          "default": 9080
+        }
+      ],
+      // CBOARD_WEBSERVER角色的【高级】信息
+      "configWriter": {
+        "generators": [
+          {
+            "filename": "cboard.properties",
+            "configFormat": "properties",
+            // 包含的参数
+            "includedParams": [
+              "server_web_port"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
