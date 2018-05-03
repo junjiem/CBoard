@@ -215,20 +215,24 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
                 conn = ds.getConnection();
             } catch (SQLException e) {
                 datasourceMap.remove(key);
-                throw e;
+                throw new CBoardException(e.getMessage());
             }
             return conn;
         } else {
             String driver = dataSource.get(DRIVER);
             String jdbcurl = dataSource.get(JDBC_URL);
-
             Class.forName(driver);
             Properties props = new Properties();
             props.setProperty("user", username);
             if (StringUtils.isNotBlank(password)) {
                 props.setProperty("password", password);
             }
-            return DriverManager.getConnection(jdbcurl, props);
+            try {
+                return DriverManager.getConnection(jdbcurl, props);
+            }catch (Exception e){
+                e.printStackTrace();
+                throw new CBoardException(e.getMessage());
+            }
         }
     }
 
@@ -242,7 +246,7 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
         if (config != null) {
             whereStr = sqlHelper.assembleFilterSql(config);
         }
-        fsql = "SELECT cb_view.%s FROM (\n%s\n) cb_view %s GROUP BY cb_view.%s";
+        fsql = "SELECT hb_view.%s FROM (\n%s\n) hb_view %s GROUP BY hb_view.%s";
         exec = String.format(fsql, columnName, sql, whereStr, columnName);
         LOG.info(exec);
         try (Connection connection = getConnection();
@@ -263,7 +267,7 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
         ResultSetMetaData metaData;
         try {
             stat.setMaxRows(100);
-            String fsql = "\nSELECT * FROM (\n%s\n) cb_view WHERE 1=0";
+            String fsql = "\nSELECT * FROM (\n%s\n) hb_view WHERE 1=0";
             String sql = String.format(fsql, subQuerySql);
             LOG.info(sql);
             ResultSet rs = stat.executeQuery(sql);
@@ -342,12 +346,10 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
         return DPCommonUtils.transform2AggResult(config, list);
     }
 
-
     @Override
     public String viewAggDataQuery(AggConfig config) throws Exception {
         return sqlHelper.assembleAggDataSql(config);
     }
-
 
     @Override
     public void afterPropertiesSet() throws Exception {

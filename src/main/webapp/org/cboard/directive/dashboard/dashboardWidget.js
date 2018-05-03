@@ -57,6 +57,9 @@ cBoard.directive('dashboardWidget', function ($compile, $templateCache, dataServ
                         case 'table':
                             renderTable(scope, element, attrs);
                             break;
+                        case 'grid':
+                            renderTable(scope, element, attrs);
+                            break;
                         default:
                             renderEchart(scope, element, attrs);
                     }

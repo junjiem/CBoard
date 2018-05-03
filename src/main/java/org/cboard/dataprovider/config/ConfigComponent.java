@@ -8,26 +8,29 @@ import java.util.Iterator;
 public abstract class ConfigComponent {
 
     public void add(ConfigComponent ConfigComponent) {
-        throw new UnsupportedOperationException();
+        //throw new UnsupportedOperationException();
     }
 
     public void remove(ConfigComponent ConfigComponent) {
-        throw new UnsupportedOperationException();
+        //throw new UnsupportedOperationException();
     }
 
     public Iterator<ConfigComponent> getIterator() {
-        throw new UnsupportedOperationException();
+        //throw new UnsupportedOperationException();
+        return null;
     }
 
     public String getName() {
-        throw new UnsupportedOperationException();
+        //throw new UnsupportedOperationException();
+        return null;
     }
 
     public String getDescription() {
-        throw new UnsupportedOperationException();
+        //throw new UnsupportedOperationException();
+        return null;
     }
 
     public void print() {
-        throw new UnsupportedOperationException();
+        //throw new UnsupportedOperationException();
     }
 }

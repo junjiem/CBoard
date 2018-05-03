@@ -3,11 +3,11 @@
  */
 'use strict';
 cBoard.service('chartService', function ($q, dataService, chartPieService, chartLineService, chartFunnelService,
-                                         chartSankeyService, chartTableService, chartKpiService, chartRadarService,
+                                         chartSankeyService, chartTableService, chartGridService, chartKpiService, chartRadarService,
                                          chartMapService, chartScatterService, chartGaugeService, chartWordCloudService,
                                          chartTreeMapService, chartAreaMapService, chartHeatMapCalendarService, chartHeatMapTableService,
                                          chartLiquidFillService, chartContrastService, chartChinaMapService, chartChinaMapBmapService,
-                                         chartRelationService ) {
+                                         chartRelationService) {
 
         this.render = function (containerDom, widget, optionFilter, scope, reload, persist, relations) {
             var deferred = $q.defer();
@@ -88,6 +88,8 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                 } finally {
                     if (widget.config.chart_type == 'chinaMapBmap') {
                         chart.render(containerDom, option, scope, persist, data.drill);
+                    } else if (widget.config.chart_type == 'grid') {
+                        chart.render(containerDom, option, scope, persist, data.chartConfig.gridConfig);
                     } else {
                         deferred.resolve(chart.render(containerDom, option, scope, persist, data.drill, relations, widget.config));
                     }
@@ -133,6 +135,9 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                     break;
                 case 'table':
                     chart = chartTableService;
+                    break;
+                case 'grid':
+                    chart = chartGridService;
                     break;
                 case 'funnel':
                     chart = chartFunnelService;
