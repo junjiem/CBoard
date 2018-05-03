@@ -227,7 +227,8 @@
       "SCATTER_MAP":"Scatter Map",
       "CHINA_MAP":"China Map (Local)",
       "CHINA_MAP_BMAP":"China Map (Bmap)",
-      "RELATION": "Relation"
+      "RELATION": "Relation",
+      "WORLD_MAP": "World Map"
     },
     "DASHBOARD": {
       "CATEGORY": "Category",
@@ -277,6 +278,7 @@
       "TITLE": "Title",
       "NEW_GRID_LAYOUT": "New grid layout",
       "NEW_TIMELINE_LAYOUT": "New timeline layout",
+      "NEW_COCKPIT_LAYOUT":"New cockpit layout",
       "VALUE_FORMMAT_ALERT": "Only date type need format",
       "AUTOMATIC_REFRESH_SWITCH": "Automatic refresh switch",
       "REMOVE_EMPTY_LINES": "Remove empty lines",
