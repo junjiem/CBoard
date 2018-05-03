@@ -85,7 +85,7 @@
     "CONFIRM_PASSWORD": "确认密码"
   },
   "FOOTER": {
-    "COPYRIGHT": "CBoard开源项目组",
+    "COPYRIGHT": "上海致宇信息技术有限公司",
     "VERSION": "版本"
   },
   "DASHBOARD": {
@@ -147,6 +147,7 @@
       "FUNNEL": "漏斗图",
       "SANKEY": "桑基图",
       "TABLE": "表格",
+      "GRID":"透视表",
       "KPI": "指标卡",
       "PIE": "饼图",
       "DOUGHNUT": "环形图",
@@ -344,7 +345,8 @@
       "FINISH": "完成",
       "PROCESSING": "处理中",
       "STATUS": "状态",
-      "XLSPWD": "xls密码"
+      "XLSPWD": "xls密码",
+      "SEND_MAIL": "发送邮件"
     },
     "SHARE_RES": {
       "YOUR_RES": "你的资源",
@@ -412,6 +414,21 @@
       "START": "开始位置",
       "ROWS": "结果数",
       "FL": "结果字段"
+    },
+    "UDSP":{
+      "UDSP_SERVERS": "UDSP服务",
+      "USERNAME": "用户名",
+      "PASSWORD": "密码",
+      "SERVICE_NAME": "服务名",
+      "SQL_TEXT": "SQL查询语句",
+      "JSON_TEXT": "JSON查询语句",
+      "PAGE_INDEX": "分页页号",
+      "PAGE_SIZE": "每页行数"
+    },
+    "GRMP":{
+      "GRMP_SERVERS": "GRMP服务",
+      "BIZ_TABLE_NAME": "业务表名称",
+      "SHOW_DICT_VALUE": "显示字典值"
     }
   },
   "CROSS_TABLE":{

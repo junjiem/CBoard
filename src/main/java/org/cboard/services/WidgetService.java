@@ -39,7 +39,7 @@ public class WidgetService {
         widget.setData(jsonObject.getString("data"));
         widget.setCategoryName(jsonObject.getString("categoryName"));
         if (StringUtils.isEmpty(widget.getCategoryName())) {
-            widget.setCategoryName("默认分类");
+            widget.setCategoryName("Default Category");
         }
         Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("widget_name", widget.getName());
@@ -64,7 +64,7 @@ public class WidgetService {
         widget.setData(jsonObject.getString("data"));
         widget.setUpdateTime(new Timestamp(Calendar.getInstance().getTimeInMillis()));
         if (StringUtils.isEmpty(widget.getCategoryName())) {
-            widget.setCategoryName("默认分类");
+            widget.setCategoryName("Default Category");
         }
         Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("widget_name", widget.getName());
