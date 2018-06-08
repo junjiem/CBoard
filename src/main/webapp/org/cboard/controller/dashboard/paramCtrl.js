@@ -74,20 +74,14 @@ cBoard.controller('paramCtrl', function ($scope, $uibModal, $http) {
                             return value;
                     },
                     onChange: function (sliderId, modelValue, highValue, pointerType) {
-                        $scope.param.type = '[a,b]';
-                        $scope.param.values = [
-                            cfg && cfg.value_fmt? formatter(modelValue, cfg.value_fmt): modelValue,
-                            cfg && cfg.value_fmt? formatter(highValue, cfg.value_fmt): highValue
-                        ];
+                        $scope.param.type = _.result(cfg, 'filterType', '[a,b]');
+                        $scope.param.values = [formatter(modelValue, cfg.value_fmt), formatter(highValue, cfg.value_fmt)];
                         apply();
                     }
                 }
             };
-            $scope.param.type = '[a,b]';
-            $scope.param.values = [
-                cfg && cfg.value_fmt? formatter($scope.slider.minValue, cfg.value_fmt): $scope.slider.minValue,
-                cfg && cfg.value_fmt? formatter($scope.slider.maxValue, cfg.value_fmt): $scope.slider.maxValue
-            ];
+            $scope.param.type = _.result(cfg, 'filterType', '[a,b]');
+            $scope.param.values = [formatter($scope.slider.minValue, cfg.value_fmt), formatter($scope.slider.maxValue, cfg.value_fmt)];
             $scope.param.refresh = function () {
                 if ($scope.slider.maxValue == $scope.slider.options.ceil) {
                     var _range = $scope.slider.maxValue - $scope.slider.minValue;
@@ -98,11 +92,8 @@ cBoard.controller('paramCtrl', function ($scope, $uibModal, $http) {
                     $scope.slider.minValue = max - _range;
                     $scope.slider.options.floor = min;
                     $scope.slider.options.ceil = max;
-                    $scope.param.type = '[a,b]';
-                    $scope.param.values = [
-                        cfg && cfg.value_fmt? formatter($scope.slider.minValue, cfg.value_fmt): $scope.slider.minValue,
-                        cfg && cfg.value_fmt? formatter($scope.slider.maxValue, cfg.value_fmt): $scope.slider.maxValue
-                    ];
+                    $scope.param.type = _.result(cfg, 'filterType', '[a,b]');
+                    $scope.param.values = [formatter($scope.slider.minValue, cfg.value_fmt), formatter($scope.slider.maxValue, cfg.value_fmt)];
                 }
             }
         } else {
