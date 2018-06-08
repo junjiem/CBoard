@@ -8,7 +8,7 @@ java -jar .\cm\doc\schema-validator-5.12.1.jar -s .\cm\csd\descriptor\service.sd
 ![](/cm/doc/csd/2csd打成jar包.png) 
 ```bash
 cd .\cm\csd
-jar -cvf .\..\..\target\CBOARD-0.4.2.jar *
+jar -cvf .\..\..\target\HBOARD-0.4.2.jar *
 ```
 
 ## 注意事项

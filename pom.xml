@@ -1,16 +1,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.cboard</groupId>
-    <artifactId>cboard</artifactId>
+    <groupId>com.hex.bigdata</groupId>
+    <artifactId>hboard</artifactId>
     <version>0.4.2</version>
     <packaging>war</packaging>
-    <name>cboard</name>
+    <name>hboard</name>
     <description/>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <schema.validator.jar>${project.basedir}/cm/doc/schema-validator-5.12.1.jar</schema.validator.jar>
-        <parcel.name>CBOARD-${project.version}</parcel.name>
+        <parcel.name>HBOARD-${project.version}</parcel.name>
         <spring.version>4.3.7.RELEASE</spring.version>
         <spring-security.version>4.1.0.RELEASE</spring-security.version>
         <mybatis.version>3.1.1</mybatis.version>
@@ -367,6 +367,15 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- 引用本地jar包 -->
+        <dependency>
+            <groupId>com.hex.bigdata</groupId>
+            <artifactId>udsp-sdk</artifactId>
+            <version>1.2</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/udsp-sdk-1.2.jar</systemPath>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -403,7 +412,7 @@
 
     <profiles>
 
-        <!-- CBoard WEB dir and war -->
+        <!-- HBoard WEB dir and war -->
         <profile>
             <id>web</id>
             <activation>
@@ -455,7 +464,7 @@
             </build>
         </profile>
 
-        <!-- Cloudera Manager CBoard parcel and CSD jar -->
+        <!-- Cloudera Manager HBoard parcel and CSD jar -->
         <profile>
             <id>cm</id>
             <activation>
@@ -745,7 +754,7 @@
                         <artifactId>maven-assembly-plugin</artifactId>
                         <inherited>false</inherited>
                         <executions>
-                            <!-- CBoard el6 parcel目录打包为.tar.gz -->
+                            <!-- HBoard el6 parcel目录打包为.tar.gz -->
                             <execution>
                                 <id>parcel-el6-packaging</id>
                                 <phase>package</phase>
@@ -758,11 +767,11 @@
                                     <finalName>${parcel.name}-el6</finalName>
                                     <outputDirectory>${project.build.directory}/CM/parcels</outputDirectory>
                                     <descriptors>
-                                        <descriptor>${project.basedir}/assemblie/cboard-parcels-el6.xml</descriptor>
+                                        <descriptor>${project.basedir}/assemblie/parcels-el6.xml</descriptor>
                                     </descriptors>
                                 </configuration>
                             </execution>
-                            <!-- CBoard el7 parcel目录打包为.tar.gz -->
+                            <!-- HBoard el7 parcel目录打包为.tar.gz -->
                             <execution>
                                 <id>parcel-el7-packaging</id>
                                 <phase>package</phase>
@@ -775,7 +784,7 @@
                                     <finalName>${parcel.name}-el7</finalName>
                                     <outputDirectory>${project.build.directory}/CM/parcels</outputDirectory>
                                     <descriptors>
-                                        <descriptor>${project.basedir}/assemblie/cboard-parcels-el7.xml</descriptor>
+                                        <descriptor>${project.basedir}/assemblie/parcels-el7.xml</descriptor>
                                     </descriptors>
                                 </configuration>
                             </execution>

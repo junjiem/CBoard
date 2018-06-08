@@ -13,7 +13,7 @@ java -jar .\cm\doc\schema-validator-5.12.1.jar -a .\cm\parcels\meta\alternatives
 #### 3、校验parcel包
 ![](/cm/doc/parcels/3校验parcel包.png) 
 ```bash
-java -jar .\cm\doc\schema-validator-5.12.1.jar -f .\target\CM\parcels\CBOARD-0.4.2-el6.parcel
+java -jar .\cm\doc\schema-validator-5.12.1.jar -f .\target\CM\parcels\HBOARD-0.4.2-el6.parcel
 ```
 
 #### 4、生成manifest.json文件

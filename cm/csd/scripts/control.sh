@@ -36,16 +36,16 @@ if [ -z "$JAVA_JVM_PERFORMANCE_OPTS" ]; then
   JAVA_JVM_PERFORMANCE_OPTS="-server -XX:+UseG1GC -XX:MaxGCPauseMillis=20 -XX:InitiatingHeapOccupancyPercent=35 -XX:+DisableExplicitGC -Djava.awt.headless=true"
 fi
 
-CBOARD_WEBAPP_NAME=/cboard
-CBOARD_WEBAPP_MAIN=org.cboard.web.WebApp
-CBOARD_WEBAPP_DIR=$CBOARD_HOME/webapp
-CBOARD_LIB_DIR=$CBOARD_HOME/lib/*
-CBOARD_RESOURCE_DIR=$CBOARD_HOME/resources
-CBOARD_INIT_MAIN=org.cboard.InitMetadata
+HBOARD_WEBAPP_NAME=/hboard
+HBOARD_WEBAPP_MAIN=org.cboard.web.WebApp
+HBOARD_WEBAPP_DIR=$HBOARD_HOME/webapp
+HBOARD_LIB_DIR=$HBOARD_HOME/lib/*
+HBOARD_RESOURCE_DIR=$HBOARD_HOME/resources
+HBOARD_INIT_MAIN=org.cboard.InitMetadata
 
-WEBAPP_ARGS="$CBOARD_WEBAPP_MAIN $SERVER_WEB_PORT $CBOARD_WEBAPP_NAME $CBOARD_WEBAPP_DIR"
+WEBAPP_ARGS="$HBOARD_WEBAPP_MAIN $SERVER_WEB_PORT $HBOARD_WEBAPP_NAME $HBOARD_WEBAPP_DIR"
 JAVA_OPTS="$JAVA $JAVA_HEAP_OPTS $JAVA_JVM_PERFORMANCE_OPTS"
-JAVA_CP="-cp $CBOARD_CONF_DIR:$CBOARD_LIB_DIR:$CBOARD_RESOURCE_DIR"
+JAVA_CP="-cp $HBOARD_CONF_DIR:$HBOARD_LIB_DIR:$HBOARD_RESOURCE_DIR"
 
 CMD=$1
 
@@ -56,11 +56,11 @@ function log {
 }
 
 if [ "start" = "$CMD" ]; then
-  log "Starting CBoard Server"
+  log "Starting HBoard Server"
   exec $JAVA_OPTS $JAVA_CP $WEBAPP_ARGS
 elif [ "init_metadata" = "$CMD" ]; then
-  log "Initing CBoard Metadata"
-  exec $JAVA_OPTS $JAVA_CP $CBOARD_INIT_MAIN
+  log "Initing HBoard Metadata"
+  exec $JAVA_OPTS $JAVA_CP $HBOARD_INIT_MAIN
 else
   log "Don't understand [$CMD]"
 fi
