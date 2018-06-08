@@ -3,7 +3,7 @@
     "destination": "/usr/bin/hboard",
     "isDirectory": false,
     "priority": 10,
-    "source": "bin/hboard"
+    "source": "bin/control"
   },
   "hboard-conf": {
     "destination": "/etc/hboard/conf",
