@@ -1,0 +1,14 @@
+{
+  "hboard": {
+    "destination": "/usr/bin/hboard",
+    "isDirectory": false,
+    "priority": 10,
+    "source": "bin/hboard"
+  },
+  "hboard-conf": {
+    "destination": "/etc/hboard/conf",
+    "isDirectory": true,
+    "priority": 10,
+    "source": "lib/hboard/conf"
+  }
+}
