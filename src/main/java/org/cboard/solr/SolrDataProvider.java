@@ -203,7 +203,8 @@ public class SolrDataProvider extends DataProvider implements Aggregatable, Init
     }
 
     private String getCacheKey() {
-        return Hashing.md5().newHasher().putString(JSONObject.toJSON(dataSource).toString() + JSONObject.toJSON(query).toString(), Charsets.UTF_8).hash().toString();
+        return Hashing.md5().newHasher().putString(JSONObject.toJSON(dataSource).toString()
+                + JSONObject.toJSON(query).toString(), Charsets.UTF_8).hash().toString();
     }
 
     private SolrClient getSolrServer(String solrServers, String collectionName) {
@@ -232,10 +233,10 @@ public class SolrDataProvider extends DataProvider implements Aggregatable, Init
     }
 
     public String[][] getSolrData() throws Exception {
-        String solrServers = dataSource.get("solrServers");
+        String solrServers = dataSource.get(SOLR_SERVERS);
         if (StringUtils.isBlank(solrServers))
             throw new CBoardException("Datasource config Solr Servers can not be empty.");
-        String collectionName = query.get("collection");
+        String collectionName = query.get(COLLECTION);
         if (StringUtils.isBlank(collectionName))
             throw new CBoardException("Collection can not be empty.");
 

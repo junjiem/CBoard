@@ -25,7 +25,7 @@
                     ng-click="editSort(o);cleanVSort();">
                 <span class="fa" ng-class="{undefined:'fa-sort','asc':'fa-sort-asc','desc':'fa-sort-desc'}[o.sort]"></span>
             </button>
-            <button ng-if="curWidget.config.chart_type=='table'" type="button" class="btn btn-default btn-sm dropdown-toggle"
+            <button ng-if="curWidget.config.chart_type=='table' || curWidget.config.chart_type=='grid'" type="button" class="btn btn-default btn-sm dropdown-toggle"
                     ng-click="editAlign(o)">
                 <span class="fa" ng-class="{undefined:'fa-align-center','left':'fa-align-left','right':'fa-align-right'}[o.align]"></span>
             </button>
