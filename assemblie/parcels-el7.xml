@@ -18,40 +18,40 @@
             <fileMode>0755</fileMode>
         </fileSet>
         <fileSet>
-            <directory>${project.basedir}/cm/parcels/el7/lib/hboard/bin</directory>
-            <outputDirectory>/${parcel.name}/lib/hboard/bin</outputDirectory>
+            <directory>${project.basedir}/cm/parcels/el7/lib/${project.artifactId}/bin</directory>
+            <outputDirectory>/${parcel.name}/lib/${project.artifactId}/bin</outputDirectory>
             <fileMode>0755</fileMode>
         </fileSet>
         <!--
         <fileSet>
             <directory>${project.basedir}/phantomjs-2.1.1</directory>
-            <outputDirectory>/${parcel.name}/lib/hboard/phantomjs-2.1.1</outputDirectory>
+            <outputDirectory>/${parcel.name}/lib/${project.artifactId}/phantomjs-2.1.1</outputDirectory>
             <fileMode>0755</fileMode>
         </fileSet>
         -->
         <fileSet>
             <directory>${project.build.directory}/lib</directory>
-            <outputDirectory>/${parcel.name}/lib/hboard/lib</outputDirectory>
+            <outputDirectory>/${parcel.name}/lib/${project.artifactId}/lib</outputDirectory>
             <fileMode>0755</fileMode>
         </fileSet>
         <fileSet>
             <directory>${project.basedir}/lib</directory>
-            <outputDirectory>/${parcel.name}/lib/hboard/lib</outputDirectory>
+            <outputDirectory>/${parcel.name}/lib/${project.artifactId}/lib</outputDirectory>
             <fileMode>0755</fileMode>
         </fileSet>
         <fileSet>
             <directory>${project.build.directory}/resources</directory>
-            <outputDirectory>/${parcel.name}/lib/hboard/resources</outputDirectory>
+            <outputDirectory>/${parcel.name}/lib/${project.artifactId}/resources</outputDirectory>
             <fileMode>0755</fileMode>
         </fileSet>
         <fileSet>
             <directory>${project.build.directory}/conf</directory>
-            <outputDirectory>/${parcel.name}/lib/hboard/conf</outputDirectory>
+            <outputDirectory>/${parcel.name}/lib/${project.artifactId}/conf</outputDirectory>
             <fileMode>0755</fileMode>
         </fileSet>
         <fileSet>
             <directory>${project.basedir}/src/main/webapp</directory>
-            <outputDirectory>/${parcel.name}/lib/hboard/webapp</outputDirectory>
+            <outputDirectory>/${parcel.name}/lib/${project.artifactId}/webapp</outputDirectory>
             <fileMode>0755</fileMode>
         </fileSet>
     </fileSets>
