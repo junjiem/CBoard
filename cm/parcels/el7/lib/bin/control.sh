@@ -1,16 +1,16 @@
 #!/bin/bash
 
-if [ -z "$CBOARD_HOME" ]; then
-  export CBOARD_HOME="$(cd "`dirname "$0"`"/..; pwd)"
+if [ -z "$HBOARD_HOME" ]; then
+  export HBOARD_HOME="$(cd "`dirname "$0"`"/..; pwd)"
 fi
 
 PORT=9080
-NAME=cboard
+NAME=hboard
 WEBAPP_MAIN=org.cboard.web.WebApp
-WEBAPP_DIR=$CBOARD_HOME/webapp
-LIB_DIR=$CBOARD_HOME/lib/*
-CONF_DIR=$CBOARD_HOME/conf
-RESOURCES_DIR=$CBOARD_HOME/resources
+WEBAPP_DIR=$HBOARD_HOME/webapp
+LIB_DIR=$HBOARD_HOME/lib/*
+CONF_DIR=$HBOARD_HOME/conf
+RESOURCES_DIR=$HBOARD_HOME/resources
 INIT_MAIN=org.cboard.InitMetadata
 
 # Which java to use

@@ -6,14 +6,14 @@ set -x
 date; date 1>&2
 
 # Preference order:
-# 1. CBOARD_HOME (set by default_env.sh in the CBoard parcel).
-# 2. CDH_CBOARD_HOME (set by cdh_env.sh in the CDH parcel).
-# 3. Hardcoded default value (where the Cloudera packages install CBoard).
-DEFAULT_CBOARD_HOME=/usr/lib/cboard
-CBOARD_HOME=${CBOARD_HOME:-$CDH_CBOARD_HOME}
-CBOARD_HOME=${CBOARD_HOME:-$DEFAULT_CBOARD_HOME}
+# 1. HBOARD_HOME (set by default_env.sh in the HBoard parcel).
+# 2. CDH_HBOARD_HOME (set by cdh_env.sh in the CDH parcel).
+# 3. Hardcoded default value (where the Cloudera packages install HBoard).
+DEFAULT_HBOARD_HOME=/usr/lib/hboard
+HBOARD_HOME=${HBOARD_HOME:-$CDH_HBOARD_HOME}
+HBOARD_HOME=${HBOARD_HOME:-$DEFAULT_HBOARD_HOME}
 
-CBOARD_CONF_DIR="$CONF_DIR/cboard-conf"
+HBOARD_CONF_DIR="$CONF_DIR/hboard-conf"
 
 # Which java to use
 if [ -z "$JAVA_HOME" ]; then
@@ -36,16 +36,16 @@ if [ -z "$JAVA_JVM_PERFORMANCE_OPTS" ]; then
   JAVA_JVM_PERFORMANCE_OPTS="-server -XX:+UseG1GC -XX:MaxGCPauseMillis=20 -XX:InitiatingHeapOccupancyPercent=35 -XX:+DisableExplicitGC -Djava.awt.headless=true"
 fi
 
-CBOARD_WEBAPP_NAME=/cboard
-CBOARD_WEBAPP_MAIN=org.cboard.web.WebApp
-CBOARD_WEBAPP_DIR=$CBOARD_HOME/webapp
-CBOARD_LIB_DIR=$CBOARD_HOME/lib/*
-CBOARD_RESOURCE_DIR=$CBOARD_HOME/resources
-CBOARD_INIT_MAIN=org.cboard.InitMetadata
+HBOARD_WEBAPP_NAME=/hboard
+HBOARD_WEBAPP_MAIN=org.cboard.web.WebApp
+HBOARD_WEBAPP_DIR=$HBOARD_HOME/webapp
+HBOARD_LIB_DIR=$HBOARD_HOME/lib/*
+HBOARD_RESOURCE_DIR=$HBOARD_HOME/resources
+HBOARD_INIT_MAIN=org.cboard.InitMetadata
 
-WEBAPP_ARGS="$CBOARD_WEBAPP_MAIN $SERVER_WEB_PORT $CBOARD_WEBAPP_NAME $CBOARD_WEBAPP_DIR"
+WEBAPP_ARGS="$HBOARD_WEBAPP_MAIN $SERVER_WEB_PORT $HBOARD_WEBAPP_NAME $HBOARD_WEBAPP_DIR"
 JAVA_OPTS="$JAVA $JAVA_HEAP_OPTS $JAVA_JVM_PERFORMANCE_OPTS"
-JAVA_CP="-cp $CBOARD_CONF_DIR:$CBOARD_LIB_DIR:$CBOARD_RESOURCE_DIR"
+JAVA_CP="-cp $HBOARD_CONF_DIR:$HBOARD_LIB_DIR:$HBOARD_RESOURCE_DIR"
 
 CMD=$1
 
@@ -56,11 +56,11 @@ function log {
 }
 
 if [ "start" = "$CMD" ]; then
-  log "Starting CBoard Server"
+  log "Starting HBoard Server"
   exec $JAVA_OPTS $JAVA_CP $WEBAPP_ARGS
 elif [ "init_metadata" = "$CMD" ]; then
-  log "Initing CBoard Metadata"
-  exec $JAVA_OPTS $JAVA_CP $CBOARD_INIT_MAIN
+  log "Initing HBoard Metadata"
+  exec $JAVA_OPTS $JAVA_CP $HBOARD_INIT_MAIN
 else
   log "Don't understand [$CMD]"
 fi

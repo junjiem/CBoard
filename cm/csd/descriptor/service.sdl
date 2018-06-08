@@ -1,20 +1,20 @@
 {
-  "name": "CBOARD",
-  "label": "CBoard",
-  "description": "最容易使用且自助开放式的BI商业智能分析平台。<span class=\"error\">在添加这个服务之前, 请确保 CBoard parcel 被激活或者 CBoard package 已安装.</span>",
+  "name": "HBOARD",
+  "label": "HBoard",
+  "description": "最容易使用且自助开放式的BI商业智能分析平台。<span class=\"error\">在添加这个服务之前, 请确保 HBoard parcel 被激活或者 HBoard package 已安装.</span>",
   "version": "0.4.2",
   "inExpressWizard": true,
   "parcel": {
-    //"repoUrl": "http://archive.goupwith.com/cboard/parcels/latest/",
-    "repoUrl":"http://202.101.3.118:9089/cboard/parcels/latest/",
+    //"repoUrl": "http://archive.goupwith.com/hboard/parcels/latest/",
+    "repoUrl":"http://202.101.3.118:9089/hboard/parcels/latest/",
     "requiredTags": [
-      "cboard"
+      "hboard"
     ]
   },
   // 用户和组
   "runAs": {
-    "user": "cboard",
-    "group": "cboard"
+    "user": "hboard",
+    "group": "hboard"
   },
   // 兼容性
   "compatibility": {
@@ -27,7 +27,7 @@
   "icon": "images/icon.png",
   // 外部链接
   "rolesWithExternalLinks": [
-    "CBOARD_WEBSERVER"
+    "HBOARD_WEBSERVER"
   ],
   // 初始化
   "serviceInit": {
@@ -42,9 +42,9 @@
   "commands": [
     {
       "name": "InitMetadata",
-      "label": "初始化CBoard的元数据库表",
-      "description": "初始化CBoard的元数据库表",
-      "roleName": "CBOARD_WEBSERVER",
+      "label": "初始化HBoard的元数据库表",
+      "description": "初始化HBoard的元数据库表",
+      "roleName": "HBOARD_WEBSERVER",
       "roleCommand": "init_metadata",
       // 单节点运行
       "runMode": "single"
@@ -66,22 +66,22 @@
   // 角色信息
   "roles": [
     {
-      "name": "CBOARD_WEBSERVER",
-      "label": "CBoard Web Server",
-      "pluralLabel": "CBoard Web Servers",
+      "name": "HBOARD_WEBSERVER",
+      "label": "HBoard Web Server",
+      "pluralLabel": "HBoard Web Servers",
       "jvmBased": "true",
       // 角色实例个数
       "topology": {
         "minInstances": "1",
         "maxInstances": "1"
       },
-      // CBOARD_WEBSERVER角色的【外部链接】信息
+      // HBOARD_WEBSERVER角色的【外部链接】信息
       "externalLink": {
-        "name": "cboard_server_web_ui",
-        "label": "CBoard Web Server UI",
-        "url": "http://${host}:${server_web_port}/cboard"
+        "name": "hboard_server_web_ui",
+        "label": "HBoard Web Server UI",
+        "url": "http://${host}:${server_web_port}/hboard"
       },
-      // CBOARD_WEBSERVER角色的【启动】信息
+      // HBOARD_WEBSERVER角色的【启动】信息
       "startRunner": {
         "program": "scripts/control.sh",
         // 传入的值
@@ -94,12 +94,12 @@
           "SERVER_MAX_HEAP_SIZE": "${server_max_heap_size}"
         }
       },
-      // CBOARD_WEBSERVER角色的【操作】
+      // HBOARD_WEBSERVER角色的【操作】
       "commands": [
         {
           "name": "init_metadata",
-          "label": "初始化CBoard的元数据库表",
-          "description": "初始化CBoard的元数据库表",
+          "label": "初始化HBoard的元数据库表",
+          "description": "初始化HBoard的元数据库表",
           // 期望的退出码
           "expectedExitCodes": [
             0
@@ -114,27 +114,27 @@
           }
         }
       ],
-      // CBOARD_WEBSERVER角色的【日志】信息
+      // HBOARD_WEBSERVER角色的【日志】信息
       "logging": {
         "configFilename": "log4j.properties",
-        "dir": "/var/log/cboard",
-        "filename": "cboard-webserver-${host}.log",
+        "dir": "/var/log/hboard",
+        "filename": "hboard-webserver-${host}.log",
         "modifiable": true,
         "loggingType": "log4j"
       },
-      // CBOARD_WEBSERVER角色的【配置】信息
+      // HBOARD_WEBSERVER角色的【配置】信息
       "parameters": [
         {
           "name": "server_web_port",
-          "label": "CBoard Web服务的端口",
-          "description": "这个参数是CBoard Web服务的端口值",
+          "label": "HBoard Web服务的端口",
+          "description": "这个参数是HBoard Web服务的端口值",
           "required": "true",
           "type": "port",
           "default": 9080
         },
         {
           "name": "server_max_heap_size",
-          "label": "CBoard Web服务的Java堆栈大小",
+          "label": "HBoard Web服务的Java堆栈大小",
           "description": "Java进程堆内存的最大大小，-Xmx以字节传递给Java",
           "required": "true",
           "type": "memory",
@@ -146,7 +146,7 @@
           "name": "jdbc_initialize_database",
           "label": "是否初始化元数据库表",
           "configName": "jdbc.initialize.database",
-          "description": "初次添加CBoard Web Server角色时是否初始化元数据库表",
+          "description": "初次添加HBoard Web Server角色时是否初始化元数据库表",
           "required": "true",
           "type": "boolean",
           "default": true,
@@ -212,16 +212,16 @@
           "required": "true",
           "type": "path",
           "pathType": "localDataDir",
-          "default": "/opt/cloudera/parcels/CBOARD/lib/cboard/phantomjs-2.1.1/bin/phantomjs"
+          "default": "/opt/cloudera/parcels/HBOARD/lib/hboard/phantomjs-2.1.1/bin/phantomjs"
         },
         {
           "name": "aggregator_h2_url",
           "label": "聚合器的H2 URL",
           "configName": "aggregator.h2.url",
-          "description": "聚合器的H2 URL。在文件系统中存储数据：jdbc:h2:~/H2Data/cboard;AUTO_SERVER=TRUE;LOG=0;UNDO_LOG=0，在内存中存储数据：jdbc:h2:nioMemFS:cboard;LOG=0;UNDO_LOG=0",
+          "description": "聚合器的H2 URL。在文件系统中存储数据：jdbc:h2:~/H2Data/hboard;AUTO_SERVER=TRUE;LOG=0;UNDO_LOG=0，在内存中存储数据：jdbc:h2:nioMemFS:hboard;LOG=0;UNDO_LOG=0",
           "required": "true",
           "type": "string",
-          "default": "jdbc:h2:~/H2Data/cboard;AUTO_SERVER=TRUE;LOG=0;UNDO_LOG=0"
+          "default": "jdbc:h2:~/H2Data/hboard;AUTO_SERVER=TRUE;LOG=0;UNDO_LOG=0"
         },
         {
           "name": "aggregator_h2_database_name",
@@ -230,7 +230,7 @@
           "description": "聚合器的H2 URL",
           "required": "true",
           "type": "string",
-          "default": "cboard"
+          "default": "hboard"
         },
         {
           "name": "aggregator_h2_cleanjob_quarz",
@@ -292,11 +292,11 @@
           "default": false
         }
       ],
-      // CBOARD_WEBSERVER角色的【高级】信息
+      // HBOARD_WEBSERVER角色的【高级】信息
       "configWriter": {
         "generators": [
           {
-            "filename": "cboard-conf/config.properties",
+            "filename": "hboard-conf/config.properties",
             "configFormat": "properties",
             // 不包括的参数
             "excludedParams": [
@@ -325,7 +325,7 @@
             ]
           },
           {
-            "filename": "cboard-conf/initmetadata.properties",
+            "filename": "hboard-conf/initmetadata.properties",
             "configFormat": "properties",
             "includedParams": [
               "jdbc_initialize_database",
