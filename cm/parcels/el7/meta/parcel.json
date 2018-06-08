@@ -21,7 +21,7 @@
   "replaces": "HBOARD",
   "schema_version": 1,
   "scripts": {
-    "defines": "hboard_env.sh"
+    "defines": "default_env.sh"
   },
   "setActiveSymlink": true,
   "users": {

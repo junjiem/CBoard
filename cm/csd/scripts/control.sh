@@ -6,14 +6,14 @@ set -x
 date; date 1>&2
 
 # Preference order:
-# 1. CBOARD_HOME (set by cboard_env.sh in the CBoard parcel).
-# 2. CDH_CBOARD_HOME (set by cdh_env.sh in the CDH parcel).
-# 3. Hardcoded default value (where the Cloudera packages install CBoard).
-DEFAULT_CBOARD_HOME=/usr/lib/cboard
-CBOARD_HOME=${CBOARD_HOME:-$CDH_CBOARD_HOME}
-CBOARD_HOME=${CBOARD_HOME:-$DEFAULT_CBOARD_HOME}
+# 1. HBOARD_HOME (set by default_env.sh in the HBoard parcel).
+# 2. CDH_HBOARD_HOME (set by cdh_env.sh in the CDH parcel).
+# 3. Hardcoded default value (where the Cloudera packages install HBoard).
+DEFAULT_HBOARD_HOME=/usr/lib/hboard
+HBOARD_HOME=${HBOARD_HOME:-$CDH_HBOARD_HOME}
+HBOARD_HOME=${HBOARD_HOME:-$DEFAULT_HBOARD_HOME}
 
-CBOARD_CONF_DIR="$CONF_DIR/cboard-conf"
+HBOARD_CONF_DIR="$CONF_DIR/hboard-conf"
 
 # Which java to use
 if [ -z "$JAVA_HOME" ]; then
