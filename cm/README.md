@@ -11,7 +11,7 @@ java -jar .\cm\doc\schema-validator-5.12.1.jar -s .\cm\csd\descriptor\service.sd
 #### 2、编译并打包CSD
 ```bash
 cd .\cm\csd
-jar -cvf .\..\..\target\CBOARD-0.4.2.jar *
+jar -cvf .\..\..\target\HBOARD-0.4.2.jar *
 ```
 
 ### 注意事项
@@ -34,7 +34,7 @@ java -jar .\cm\doc\schema-validator-5.12.1.jar -a .\cm\parcels\meta\alternatives
 
 #### 3、校验parcel包
 ```bash
-java -jar .\cm\doc\schema-validator-5.12.1.jar -f .\target\CM\parcels\CBOARD-0.4.2-el6.parcel
+java -jar .\cm\doc\schema-validator-5.12.1.jar -f .\target\CM\parcels\HBOARD-0.4.2-el6.parcel
 ```
 
 #### 4、生成manifest.json文件
@@ -54,14 +54,14 @@ mvn clean verify -Pcm
 #### 注：在windows上检查parcel和生成manifest.json有问题
 
 ### 所有shell文件必须转成unix格式
-dos2unix cm/parcels/bin/cboard
-dos2unix cm/parcels/lib/cboard/bin/cboard.sh
+dos2unix cm/parcels/bin/control
+dos2unix cm/parcels/lib/hboard/bin/control.sh
 dos2unix cm/parcels/meta/default_env.sh
 dos2unix cm/csd/scripts/control.sh
 
 ### 使用新的parcel之前需要清空本地缓存
-rm -rf /opt/cloudera/parcel-cache/CBOARD*
-rm -rf /opt/cloudera/parcels/.flood/CBOARD*
+rm -rf /opt/cloudera/parcel-cache/HBOARD*
+rm -rf /opt/cloudera/parcels/.flood/HBOARD*
 
 ### 使用新的CSD之前需要清空本地缓存
 rm -rf /var/run/cloudera-scm-agent/process/*
