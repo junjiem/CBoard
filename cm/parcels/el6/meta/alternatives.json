@@ -1,14 +1,14 @@
 {
-  "cboard": {
-    "destination": "/usr/bin/cboard",
+  "hboard": {
+    "destination": "/usr/bin/hboard",
     "isDirectory": false,
     "priority": 10,
     "source": "bin/control"
   },
-  "cboard-conf": {
-    "destination": "/etc/cboard/conf",
+  "hboard-conf": {
+    "destination": "/etc/hboard/conf",
     "isDirectory": true,
     "priority": 10,
-    "source": "lib/cboard/conf"
+    "source": "lib/hboard/conf"
   }
 }

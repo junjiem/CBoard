@@ -29,7 +29,7 @@ public class DatasetService {
         dataset.setData(jsonObject.getString("data"));
         dataset.setCategoryName(jsonObject.getString("categoryName"));
         if (StringUtils.isEmpty(dataset.getCategoryName())) {
-            dataset.setCategoryName("默认分类");
+            dataset.setCategoryName("Default Category");
         }
         Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("dataset_name", dataset.getName());
@@ -53,7 +53,7 @@ public class DatasetService {
         dataset.setData(jsonObject.getString("data"));
         dataset.setUpdateTime(new Timestamp(Calendar.getInstance().getTimeInMillis()));
         if (StringUtils.isEmpty(dataset.getCategoryName())) {
-            dataset.setCategoryName("默认分类");
+            dataset.setCategoryName("Default Category");
         }
         Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("dataset_name", dataset.getName());
