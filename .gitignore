@@ -6,7 +6,6 @@
 # User-specific stuff:
 .idea/*
 target
-.DS_Store
 **/*.iml
 
 ## File-based project format:
