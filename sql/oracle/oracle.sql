@@ -1,10 +1,24 @@
-DROP sequence AUTO_INCREMENT;
-CREATE SEQUENCE AUTO_INCREMENT
-            INCREMENT BY 1  -- 每次加几个
-            START WITH 1    -- 从1开始计数
-            NOMAXVALUE      -- 不设置最大值
-            NOCYCLE         -- 一直累加，不循环
-            NOCACHE ;
+declare
+  V_NUM number;
+BEGIN
+  ----多次删除时，每次都将v_num设置成为0
+  V_NUM := 0;
+  ----判断序列 AUTO_INCREMENT 是否存在（区分大小写）
+  select count(0)
+    into V_NUM
+    from user_sequences
+   where sequence_name = 'AUTO_INCREMENT';
+  ----如果不存在立即创建
+  if V_NUM = 0 then
+    execute immediate 'CREATE SEQUENCE AUTO_INCREMENT
+INCREMENT BY 1  -- 每次加几个
+START WITH 1    -- 从1开始计数
+NOMAXVALUE      -- 不设置最大值
+NOCYCLE         -- 一直累加，不循环
+NOCACHE';
+  end if;
+END;
+
 
 CREATE TABLE dashboard_board (
   board_id NUMBER NOT NULL,
