@@ -1,7 +1,3 @@
-DROP DATABASE IF EXISTS cboard;
-CREATE DATABASE cboard CHARACTER SET utf8;
-USE cboard;
-
 CREATE TABLE dashboard_board (
   board_id bigint(20) NOT NULL AUTO_INCREMENT,
   user_id varchar(50) NOT NULL,
