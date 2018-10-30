@@ -640,44 +640,44 @@
                                     </arguments>
                                 </configuration>
                             </execution>
-                            <!-- 校验el6的parcel包 -->
-                            <execution>
-                                <id>validate-el6-parcel</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                                <configuration>
-                                    <executable>java</executable>
-                                    <arguments>
-                                        <argument>-jar</argument>
-                                        <argument>${schema.validator.jar}</argument>
-                                        <argument>-f</argument>
-                                        <argument>
-                                            ${project.build.directory}/CM/parcels/${parcel.name}-el6.parcel
-                                        </argument>
-                                    </arguments>
-                                </configuration>
-                            </execution>
-                            <!-- 校验el7的parcel包 -->
-                            <execution>
-                                <id>validate-el7-parcel</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                                <configuration>
-                                    <executable>java</executable>
-                                    <arguments>
-                                        <argument>-jar</argument>
-                                        <argument>${schema.validator.jar}</argument>
-                                        <argument>-f</argument>
-                                        <argument>
-                                            ${project.build.directory}/CM/parcels/${parcel.name}-el7.parcel
-                                        </argument>
-                                    </arguments>
-                                </configuration>
-                            </execution>
+                            <!--&lt;!&ndash; 校验el6的parcel包 &ndash;&gt;-->
+                            <!--<execution>-->
+                                <!--<id>validate-el6-parcel</id>-->
+                                <!--<phase>verify</phase>-->
+                                <!--<goals>-->
+                                    <!--<goal>exec</goal>-->
+                                <!--</goals>-->
+                                <!--<configuration>-->
+                                    <!--<executable>java</executable>-->
+                                    <!--<arguments>-->
+                                        <!--<argument>-jar</argument>-->
+                                        <!--<argument>${schema.validator.jar}</argument>-->
+                                        <!--<argument>-f</argument>-->
+                                        <!--<argument>-->
+                                            <!--${project.build.directory}/CM/parcels/${parcel.name}-el6.parcel-->
+                                        <!--</argument>-->
+                                    <!--</arguments>-->
+                                <!--</configuration>-->
+                            <!--</execution>-->
+                            <!--&lt;!&ndash; 校验el7的parcel包 &ndash;&gt;-->
+                            <!--<execution>-->
+                                <!--<id>validate-el7-parcel</id>-->
+                                <!--<phase>verify</phase>-->
+                                <!--<goals>-->
+                                    <!--<goal>exec</goal>-->
+                                <!--</goals>-->
+                                <!--<configuration>-->
+                                    <!--<executable>java</executable>-->
+                                    <!--<arguments>-->
+                                        <!--<argument>-jar</argument>-->
+                                        <!--<argument>${schema.validator.jar}</argument>-->
+                                        <!--<argument>-f</argument>-->
+                                        <!--<argument>-->
+                                            <!--${project.build.directory}/CM/parcels/${parcel.name}-el7.parcel-->
+                                        <!--</argument>-->
+                                    <!--</arguments>-->
+                                <!--</configuration>-->
+                            <!--</execution>-->
                             <!-- 生成manifest.json文件 -->
                             <execution>
                                 <id>python-manifest-json</id>
