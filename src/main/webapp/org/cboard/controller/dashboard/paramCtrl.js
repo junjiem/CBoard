@@ -68,7 +68,10 @@ cBoard.controller('paramCtrl', function ($scope, $uibModal, $http) {
                     maxRange: Number(evalValue(_.result(cfg, 'maxRange', null))),
                     step: evalValue(_.result(cfg, 'step', 1 * 60 * 1000)),
                     translate: function (value) {
-                        return formatter(value, cfg.formatter);
+                        if(cfg && cfg.formatter)
+                            return formatter(value, cfg.formatter);
+                        else
+                            return value;
                     },
                     onChange: function (sliderId, modelValue, highValue, pointerType) {
                         $scope.param.type = _.result(cfg, 'filterType', '[a,b]');
