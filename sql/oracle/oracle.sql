@@ -1,25 +1,3 @@
-declare
-  V_NUM number;
-BEGIN
-  ----多次删除时，每次都将v_num设置成为0
-  V_NUM := 0;
-  ----判断序列 AUTO_INCREMENT 是否存在（区分大小写）
-  select count(0)
-    into V_NUM
-    from user_sequences
-   where sequence_name = 'AUTO_INCREMENT';
-  ----如果不存在立即创建
-  if V_NUM = 0 then
-    execute immediate 'CREATE SEQUENCE AUTO_INCREMENT
-INCREMENT BY 1  -- 每次加几个
-START WITH 1    -- 从1开始计数
-NOMAXVALUE      -- 不设置最大值
-NOCYCLE         -- 一直累加，不循环
-NOCACHE';
-  end if;
-END;
-
-
 CREATE TABLE dashboard_board (
   board_id NUMBER NOT NULL,
   user_id varchar2(50) NOT NULL,
@@ -31,26 +9,12 @@ CREATE TABLE dashboard_board (
   CONSTRAINT dashboard_board_pk PRIMARY KEY (board_id)
 );
 
-CREATE OR REPLACE TRIGGER dashboard_board_insert
-BEFORE INSERT ON dashboard_board     /*触发条件：当向表dashboard_board执行插入操作时触发此触发器*/
- FOR EACH ROW                        /*对每一行都检测是否触发*/
- BEGIN                                  /*触发器开始*/
-       SELECT AUTO_INCREMENT.nextval INTO :new.board_id FROM dual;   /*触发器主题内容，即触发后执行的动作，在此是取得序列dectuser_tb_seq的下一个值插入到表user_info_T中的id字段中*/
-END;
-
 CREATE TABLE dashboard_category (
   category_id NUMBER NOT NULL,
   category_name varchar2(100) NOT NULL,
   user_id varchar2(100) NOT NULL,
   CONSTRAINT dashboard_category_pk PRIMARY KEY (category_id)
 );
-
-CREATE OR REPLACE TRIGGER dashboard_category_insert
-BEFORE INSERT ON dashboard_category
- FOR EACH ROW
- BEGIN
-       SELECT AUTO_INCREMENT.nextval INTO :new.category_id FROM dual;
-END;
 
 CREATE TABLE dashboard_datasource (
   datasource_id NUMBER NOT NULL,
@@ -63,13 +27,6 @@ CREATE TABLE dashboard_datasource (
   CONSTRAINT dashboard_datasource_pk PRIMARY KEY (datasource_id)
 );
 
-CREATE OR REPLACE TRIGGER dashboard_datasource_insert
-BEFORE INSERT ON dashboard_datasource
- FOR EACH ROW
- BEGIN
-       SELECT AUTO_INCREMENT.nextval INTO :new.datasource_id FROM dual;
-END;
-
 CREATE TABLE dashboard_widget (
   widget_id NUMBER NOT NULL,
   user_id varchar2(100) NOT NULL,
@@ -81,13 +38,6 @@ CREATE TABLE dashboard_widget (
   CONSTRAINT dashboard_widget_pk PRIMARY KEY (widget_id)
 );
 
-CREATE OR REPLACE TRIGGER dashboard_widget_insert
-BEFORE INSERT ON dashboard_widget
- FOR EACH ROW
- BEGIN
-       SELECT AUTO_INCREMENT.nextval INTO :new.widget_id FROM dual;
-END;
-
 CREATE TABLE dashboard_dataset (
   dataset_id NUMBER NOT NULL,
   user_id varchar2(100) NOT NULL,
@@ -98,13 +48,6 @@ CREATE TABLE dashboard_dataset (
   update_time TIMESTAMP DEFAULT sysdate,
   CONSTRAINT dashboard_dataset_pk PRIMARY KEY (dataset_id)
 );
-
-CREATE OR REPLACE TRIGGER dashboard_dataset_insert
-BEFORE INSERT ON dashboard_dataset
- FOR EACH ROW
- BEGIN
-       SELECT AUTO_INCREMENT.nextval INTO :new.dataset_id FROM dual;
-END;
 
 CREATE TABLE dashboard_user (
   user_id varchar2(50) NOT NULL,
@@ -125,13 +68,6 @@ CREATE TABLE dashboard_user_role (
   CONSTRAINT dashboard_user_role_pk PRIMARY KEY (user_role_id)
 );
 
-CREATE OR REPLACE TRIGGER dashboard_user_role_insert
-BEFORE INSERT ON dashboard_user_role
- FOR EACH ROW
- BEGIN
-       SELECT AUTO_INCREMENT.nextval INTO :new.user_role_id FROM dual;
-END;
-
 CREATE TABLE dashboard_role (
   role_id varchar2(100) NOT NULL,
   role_name varchar(2100) DEFAULT NULL,
@@ -148,13 +84,6 @@ CREATE TABLE dashboard_role_res (
   CONSTRAINT dashboard_role_res_pk PRIMARY KEY (role_res_id)
 );
 
-CREATE OR REPLACE TRIGGER dashboard_role_res_insert
-BEFORE INSERT ON dashboard_role_res
- FOR EACH ROW
- BEGIN
-       SELECT AUTO_INCREMENT.nextval INTO :new.role_res_id FROM dual;
-END;
-
 CREATE TABLE dashboard_job (
   job_id number NOT NULL,
   job_name varchar2(200) DEFAULT NULL,
@@ -170,13 +99,6 @@ CREATE TABLE dashboard_job (
   CONSTRAINT dashboard_job_pk PRIMARY KEY (job_id)
 );
 
-CREATE OR REPLACE TRIGGER dashboard_job_insert
-BEFORE INSERT ON dashboard_job
- FOR EACH ROW
- BEGIN
-       SELECT AUTO_INCREMENT.nextval INTO :new.job_id FROM dual;
-END;
-
 CREATE TABLE dashboard_board_param (
   board_param_id number NOT NULL,
   user_id varchar2(50) NOT NULL,
@@ -184,10 +106,3 @@ CREATE TABLE dashboard_board_param (
   config CLOB,
   CONSTRAINT dashboard_board_param_pk PRIMARY KEY (board_param_id)
 );
-
-CREATE OR REPLACE TRIGGER dashboard_board_param_insert
-BEFORE INSERT ON dashboard_board_param
- FOR EACH ROW
- BEGIN
-       SELECT AUTO_INCREMENT.nextval INTO :new.board_param_id FROM dual;
-END;

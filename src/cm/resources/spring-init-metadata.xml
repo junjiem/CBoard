@@ -35,4 +35,8 @@
         <jdbc:script encoding="utf-8" location="classpath:sql/${jdbc.database.type}/${jdbc.database.type}.sql"/>
     </jdbc:initialize-database>
 
+    <jdbc:initialize-database data-source="initDataSource" ignore-failures="NONE" enabled="#{ ${jdbc.initialize.database} and '${jdbc.database.type}' == 'oracle' ? true: false }">
+        <jdbc:script encoding="utf-8" location="classpath:sql/${jdbc.database.type}/${jdbc.database.type}.fuc" separator="$$"/>
+    </jdbc:initialize-database>
+
 </beans>
