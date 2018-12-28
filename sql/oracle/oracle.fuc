@@ -10,60 +10,69 @@ BEFORE INSERT ON dashboard_board     /*触发条件：当向表dashboard_board�
  FOR EACH ROW                        /*对每一行都检测是否触发*/
  BEGIN                                  /*触发器开始*/
        SELECT AUTO_INCREMENT.nextval INTO :new.board_id FROM dual;   /*触发器主题内容，即触发后执行的动作，在此是取得序列dectuser_tb_seq的下一个值插入到表user_info_T中的id字段中*/
-END$$ /*以$$结束*/
+END;
+$$ /*以$$结束*/
 
 CREATE OR REPLACE TRIGGER dashboard_category_insert
 BEFORE INSERT ON dashboard_category
  FOR EACH ROW
  BEGIN
        SELECT AUTO_INCREMENT.nextval INTO :new.category_id FROM dual;
-END$$ /*以$$结束*/
+END;
+$$ /*以$$结束*/
 
 CREATE OR REPLACE TRIGGER dashboard_datasource_insert
 BEFORE INSERT ON dashboard_datasource
  FOR EACH ROW
  BEGIN
        SELECT AUTO_INCREMENT.nextval INTO :new.datasource_id FROM dual;
-END$$ /*以$$结束*/
+END;
+$$ /*以$$结束*/
 
 CREATE OR REPLACE TRIGGER dashboard_widget_insert
 BEFORE INSERT ON dashboard_widget
  FOR EACH ROW
  BEGIN
        SELECT AUTO_INCREMENT.nextval INTO :new.widget_id FROM dual;
-END$$ /*以$$结束*/
+END;
+$$ /*以$$结束*/
 
 CREATE OR REPLACE TRIGGER dashboard_dataset_insert
 BEFORE INSERT ON dashboard_dataset
  FOR EACH ROW
  BEGIN
        SELECT AUTO_INCREMENT.nextval INTO :new.dataset_id FROM dual;
-END$$ /*以$$结束*/
+END;
+$$ /*以$$结束*/
 
 CREATE OR REPLACE TRIGGER dashboard_user_role_insert
 BEFORE INSERT ON dashboard_user_role
  FOR EACH ROW
  BEGIN
        SELECT AUTO_INCREMENT.nextval INTO :new.user_role_id FROM dual;
-END$$ /*以$$结束*/
+END;
+$$ /*以$$结束*/
 
 CREATE OR REPLACE TRIGGER dashboard_role_res_insert
 BEFORE INSERT ON dashboard_role_res
  FOR EACH ROW
  BEGIN
        SELECT AUTO_INCREMENT.nextval INTO :new.role_res_id FROM dual;
-END$$ /*以$$结束*/
+END;
+$$ /*以$$结束*/
 
 CREATE OR REPLACE TRIGGER dashboard_job_insert
 BEFORE INSERT ON dashboard_job
  FOR EACH ROW
  BEGIN
        SELECT AUTO_INCREMENT.nextval INTO :new.job_id FROM dual;
-END$$ /*以$$结束*/
+END;
+$$ /*以$$结束*/
 
 CREATE OR REPLACE TRIGGER dashboard_board_param_insert
 BEFORE INSERT ON dashboard_board_param
  FOR EACH ROW
  BEGIN
        SELECT AUTO_INCREMENT.nextval INTO :new.board_param_id FROM dual;
-END$$ /*以$$结束*/
+END;
+$$ /*以$$结束*/
